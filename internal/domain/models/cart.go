@@ -3,9 +3,10 @@ package models
 import "github.com/google/uuid"
 
 type Cart struct {
-	ID    uuid.UUID
-	Items []CartItem
-	Price int64
+	ID     uuid.UUID
+	Items  []CartItem
+	Price  int64
+	UserID uuid.UUID
 }
 
 type CartItem struct {

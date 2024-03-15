@@ -184,7 +184,9 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
-	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
+	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputUserReq,
+	)
 	first := true
 
 	switch rc.Operation.Operation {
@@ -267,13 +269,13 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../schema/products.gql", Input: `type Product {
-    id: ID!
-    title: String!
-    imageUrl: String!
-    description: String!
-    price: Float!
-    createdAt: String!
-    updatedAt: String!
+  id: ID!
+  title: String!
+  imageUrl: String!
+  description: String!
+  price: Float!
+  createdAt: String!
+  updatedAt: String!
 }
 
 # type Query {}
@@ -281,13 +283,20 @@ var sources = []*ast.Source{
 # type Mutation {}
 `, BuiltIn: false},
 	{Name: "../schema/users.gql", Input: `type UserDto {
-    id:        String!
-	username:  String!
-	email:     String!
-	password:  String!
-	created_at: String!
-	updated_at: String
-}`, BuiltIn: false},
+  id: String!
+  username: String!
+  email: String!
+  password: String!
+  created_at: String!
+  updated_at: String!
+}
+
+input UserReq {
+  username: String!
+  email: String!
+  password: String!
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -1026,11 +1035,14 @@ func (ec *executionContext) _UserDto_updated_at(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserDto_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2819,6 +2831,47 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputUserReq(ctx context.Context, obj interface{}) (model.UserReq, error) {
+	var it model.UserReq
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"username", "email", "password"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "username":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Username = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "password":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Password = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2984,6 +3037,9 @@ func (ec *executionContext) _UserDto(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "updated_at":
 			out.Values[i] = ec._UserDto_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

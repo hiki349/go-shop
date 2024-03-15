@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"go-shop/internal/api/gql/model"
+	"go-shop/internal/domain/mapers"
 	"go-shop/internal/domain/models"
 	"time"
 
@@ -26,14 +28,10 @@ func (svc Services) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User
 	return user, nil
 }
 
-func (svc *Services) CreateUser(ctx context.Context, value models.User) (*models.User, error) {
-	newUser := models.User{
-		ID:        uuid.New(),
-		Username:  value.Username,
-		Email:     value.Email,
-		Password:  value.Password,
-		CreatedAt: time.Now(),
-	}
+func (svc *Services) CreateUser(ctx context.Context, value model.UserReq) (*models.User, error) {
+	newUser := mapers.FromReqToUser(value)
+	newUser.ID = uuid.New()
+	newUser.CreatedAt = time.Now()
 
 	userID, err := svc.repo.CreateUser(ctx, newUser)
 	if err != nil {
@@ -48,14 +46,10 @@ func (svc *Services) CreateUser(ctx context.Context, value models.User) (*models
 	return user, nil
 }
 
-func (svc *Services) UpdateUser(ctx context.Context, id uuid.UUID, value models.User) (*models.User, error) {
-	updateUser := models.User{
-		ID:        id,
-		Username:  value.Username,
-		Email:     value.Email,
-		Password:  value.Password,
-		CreatedAt: time.Now(),
-	}
+func (svc *Services) UpdateUser(ctx context.Context, id uuid.UUID, value model.UserReq) (*models.User, error) {
+	updateUser := mapers.FromReqToUser(value)
+	updateUser.ID = uuid.New()
+	updateUser.UpdatetAt = time.Now()
 
 	userID, err := svc.repo.UpdateUser(ctx, updateUser)
 	if err != nil {

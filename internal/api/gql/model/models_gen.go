@@ -16,10 +16,16 @@ type Query struct {
 }
 
 type UserDto struct {
-	ID        string  `json:"id"`
-	Username  string  `json:"username"`
-	Email     string  `json:"email"`
-	Password  string  `json:"password"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt *string `json:"updated_at,omitempty"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+type UserReq struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

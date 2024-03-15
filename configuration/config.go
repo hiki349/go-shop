@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -20,13 +19,7 @@ func MustGetConfig() Config {
 	}
 
 	port := os.Getenv("PORT")
-
-	dbUsername := os.Getenv("DB_USERNAME")
-	dbPass := os.Getenv("DB_PASSWORD")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-
-	connStr := fmt.Sprintf("postgres://%s:%s@localhost:%s/%s", dbUsername, dbPass, dbPort, dbName)
+	connStr := os.Getenv("CONNECTION_STRING")
 
 	return Config{
 		Port:    port,

@@ -27,7 +27,7 @@ func (r Repo) FindCarts(ctx context.Context) ([]models.Cart, error) {
 	return products, nil
 }
 
-func (r Repo) FindCartByID(ctx context.Context, id string) (*models.Cart, error) {
+func (r Repo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -46,13 +46,12 @@ func (r Repo) FindCartByID(ctx context.Context, id string) (*models.Cart, error)
 	return &product, nil
 }
 
-func (r *Repo) CreateCart(ctx context.Context, userID uuid.UUID) (uuid.UUID, error) {
+func (r *Repo) CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
 	sql := "INSERT INTO carts (id, user_id) VALUES ($1, $2);"
 
-	cartID := uuid.New()
 	_, err := pgxutil.ExecRow(
 		ctx, r.db.Postgres, sql,
 		cartID,

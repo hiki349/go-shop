@@ -49,10 +49,9 @@ func (r *Repo) CreateProduct(ctx context.Context, values models.Product) (uuid.U
 	(id, title, image_url, price, created_at, updated_at)
 	VALUES ($1, $2, $3, $4, $5, $6);`
 
-	productID := uuid.New()
 	_, err := pgxutil.ExecRow(
 		ctx, r.db.Postgres, sql,
-		productID,
+		values.ID,
 		values.Title,
 		values.ImageURL,
 		values.Price,
@@ -63,7 +62,7 @@ func (r *Repo) CreateProduct(ctx context.Context, values models.Product) (uuid.U
 		return uuid.UUID{}, err
 	}
 
-	return productID, nil
+	return values.ID, nil
 }
 
 func (r *Repo) UpdateProduct(ctx context.Context, values models.Product) (uuid.UUID, error) {
@@ -80,7 +79,7 @@ func (r *Repo) UpdateProduct(ctx context.Context, values models.Product) (uuid.U
 		values.Title,
 		values.ImageURL,
 		values.Price,
-		time.Now(),
+		values.UpdatedAt,
 	)
 	if err != nil {
 		return values.ID, err

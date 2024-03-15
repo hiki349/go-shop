@@ -10,13 +10,15 @@ import (
 	"github.com/google/uuid"
 )
 
-func (svc Services) GetProducts(ctx context.Context) ([]models.Product, error) {
+func (svc Services) GetProducts(ctx context.Context) ([]*model.Product, error) {
 	products, err := svc.repo.FindProducts(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return products, nil
+	productsDTO := mapers.FromProductsToDTO(products)
+
+	return productsDTO, nil
 }
 
 func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*models.Product, error) {

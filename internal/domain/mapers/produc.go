@@ -17,6 +17,16 @@ func FromProductToDTO(product models.Product) model.Product {
 	}
 }
 
+func FromProductsToDTO(products []models.Product) []*model.Product {
+	var productsDTO []*model.Product
+	for _, item := range products {
+		itemDTO := FromProductToDTO(item)
+		productsDTO = append(productsDTO, &itemDTO)
+	}
+
+	return productsDTO
+}
+
 func FromReqToProduct(req model.ProductReq) models.Product {
 	return models.Product{
 		Title:       req.Title,

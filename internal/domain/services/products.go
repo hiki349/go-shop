@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"go-shop/internal/api/gql/model"
+	"go-shop/internal/domain/mapers"
 	"go-shop/internal/domain/models"
 	"time"
 
@@ -26,15 +28,10 @@ func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*model
 	return product, nil
 }
 
-func (svc *Services) CreateProduct(ctx context.Context, value models.Product) (*models.Product, error) {
-	newProduct := models.Product{
-		ID:          uuid.New(),
-		Title:       value.Title,
-		ImageURL:    value.ImageURL,
-		Description: value.Description,
-		Price:       value.Price,
-		CreatedAt:   time.Now(),
-	}
+func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) (*models.Product, error) {
+	newProduct := mapers.FromReqToProduct(value)
+	newProduct.ID = uuid.New()
+	newProduct.CreatedAt = time.Now()
 
 	productID, err := svc.repo.CreateProduct(ctx, newProduct)
 	if err != nil {
@@ -44,15 +41,10 @@ func (svc *Services) CreateProduct(ctx context.Context, value models.Product) (*
 	return svc.repo.FindProductByID(ctx, productID)
 }
 
-func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value models.Product) (*models.Product, error) {
-	updateProduct := models.Product{
-		ID:          id,
-		Title:       value.Title,
-		ImageURL:    value.ImageURL,
-		Description: value.Description,
-		Price:       value.Price,
-		UpdatedAt:   time.Now(),
-	}
+func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*models.Product, error) {
+	updateProduct := mapers.FromReqToProduct(value)
+	updateProduct.ID = id
+	updateProduct.CreatedAt = time.Now()
 
 	productID, err := svc.repo.UpdateProduct(ctx, updateProduct)
 	if err != nil {

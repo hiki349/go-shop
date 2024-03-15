@@ -12,6 +12,13 @@ type Product struct {
 	UpdatedAt   string  `json:"updatedAt"`
 }
 
+type ProductReq struct {
+	Title       string  `json:"title"`
+	ImageURL    string  `json:"imageUrl"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+}
+
 type Query struct {
 }
 

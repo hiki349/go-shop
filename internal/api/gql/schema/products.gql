@@ -8,6 +8,13 @@ type Product {
   updatedAt: String!
 }
 
+input ProductReq {
+  title: String!
+  imageUrl: String!
+  description: String!
+  price: Float!
+}
+
 # type Query {}
 
 # type Mutation {}

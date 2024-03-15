@@ -1,0 +1,27 @@
+package mapers
+
+import (
+	"go-shop/internal/api/gql/model"
+	"go-shop/internal/domain/models"
+)
+
+func FromProductToDTO(product models.Product) model.Product {
+	return model.Product{
+		ID:          product.ID.String(),
+		Title:       product.Title,
+		ImageURL:    product.ImageURL,
+		Description: product.Description,
+		Price:       float64(product.Price / 100),
+		CreatedAt:   product.CreatedAt.String(),
+		UpdatedAt:   product.UpdatedAt.String(),
+	}
+}
+
+func FromReqToProduct(req model.ProductReq) models.Product {
+	return models.Product{
+		Title:       req.Title,
+		ImageURL:    req.ImageURL,
+		Description: req.Description,
+		Price:       int64(req.Price * 100),
+	}
+}

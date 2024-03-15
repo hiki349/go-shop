@@ -1,0 +1,14 @@
+type Cart {
+  id: ID!
+  items: [CartItem!]!
+  price: Float!
+  user_id: String!
+}
+
+type CartItem {
+  id: ID!
+  title: String!
+  imageUrl: String!
+  price: Float!
+  count: Int!
+}

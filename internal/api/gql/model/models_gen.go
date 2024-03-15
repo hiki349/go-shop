@@ -2,6 +2,21 @@
 
 package model
 
+type Cart struct {
+	ID     string      `json:"id"`
+	Items  []*CartItem `json:"items"`
+	Price  float64     `json:"price"`
+	UserID string      `json:"user_id"`
+}
+
+type CartItem struct {
+	ID       string  `json:"id"`
+	Title    string  `json:"title"`
+	ImageURL string  `json:"imageUrl"`
+	Price    float64 `json:"price"`
+	Count    int     `json:"count"`
+}
+
 type Product struct {
 	ID          string  `json:"id"`
 	Title       string  `json:"title"`

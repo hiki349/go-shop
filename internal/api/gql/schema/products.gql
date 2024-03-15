@@ -1,11 +1,11 @@
 type Product {
-    id: ID!
-    title: String!
-    imageUrl: String!
-    description: String!
-    price: Float!
-    createdAt: String!
-    updatedAt: String!
+  id: ID!
+  title: String!
+  imageUrl: String!
+  description: String!
+  price: Float!
+  createdAt: String!
+  updatedAt: String!
 }
 
 # type Query {}

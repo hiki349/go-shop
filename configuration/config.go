@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Port    string
-	ConnStr string
+	GqlPort  string
+	RestPort string
+	ConnStr  string
 }
 
 func MustGetConfig() Config {
@@ -18,11 +19,13 @@ func MustGetConfig() Config {
 		log.Fatal(err)
 	}
 
-	port := os.Getenv("PORT")
+	gqlPort := os.Getenv("GQL_PORT")
+	restPort := os.Getenv("REST_PORT")
 	connStr := os.Getenv("CONNECTION_STRING")
 
 	return Config{
-		Port:    port,
-		ConnStr: connStr,
+		GqlPort:  gqlPort,
+		RestPort: restPort,
+		ConnStr:  connStr,
 	}
 }

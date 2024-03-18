@@ -9,6 +9,8 @@ import (
 	"go-shop/internal/api/gql/model"
 	"go-shop/internal/api/gql/runtime"
 	"log/slog"
+
+	"github.com/google/uuid"
 )
 
 // Products is the resolver for the products field.
@@ -20,6 +22,17 @@ func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) 
 	}
 
 	return products, nil
+}
+
+// Product is the resolver for the product field.
+func (r *queryResolver) Product(ctx context.Context, id uuid.UUID) (*model.Product, error) {
+	product, err := r.Services.GetProduct(ctx, id)
+	if err != nil {
+		slog.Info("error: ", err)
+		return nil, err
+	}
+
+	return product, nil
 }
 
 // Query returns runtime.QueryResolver implementation.

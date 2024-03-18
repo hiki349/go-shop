@@ -17,6 +17,7 @@ input ProductReq {
 
 type Query {
   products: [Product!]!
+  product(id: Uuid!): Product
 }
 
 # type Mutation {}

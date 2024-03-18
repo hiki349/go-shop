@@ -21,13 +21,15 @@ func (svc Services) GetProducts(ctx context.Context) ([]*model.Product, error) {
 	return productsDTO, nil
 }
 
-func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*models.Product, error) {
+func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*model.Product, error) {
 	product, err := svc.repo.FindProductByID(ctx, productID)
 	if err != nil {
 		return nil, err
 	}
 
-	return product, nil
+	productDTO := mapers.FromProductToDTO(*product)
+
+	return &productDTO, nil
 }
 
 func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) (*models.Product, error) {

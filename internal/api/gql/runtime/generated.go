@@ -375,7 +375,8 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/_scalars.gql", Input: `scalar Uuid`, BuiltIn: false},
+	{Name: "../schema/_scalars.gql", Input: `scalar Uuid
+scalar Time`, BuiltIn: false},
 	{Name: "../schema/carts.gql", Input: `type Cart {
   id: ID!
   items: [CartItem!]!

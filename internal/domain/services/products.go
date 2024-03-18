@@ -32,7 +32,7 @@ func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*model
 	return &productDTO, nil
 }
 
-func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) (*models.Product, error) {
+func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) (*model.Product, error) {
 	newProduct := mapers.FromReqToProduct(value)
 	newProduct.ID = uuid.New()
 	newProduct.CreatedAt = time.Now()
@@ -42,7 +42,14 @@ func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) 
 		return nil, err
 	}
 
-	return svc.repo.FindProductByID(ctx, productID)
+	product, err := svc.repo.FindProductByID(ctx, productID)
+	if err != nil {
+		return nil, err
+	}
+
+	productDTO := mapers.FromProductToDTO(*product)
+
+	return &productDTO, nil
 }
 
 func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*models.Product, error) {

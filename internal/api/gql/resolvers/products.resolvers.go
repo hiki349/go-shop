@@ -6,12 +6,33 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
 	"go-shop/internal/api/gql/model"
 	"go-shop/internal/api/gql/runtime"
 	"log/slog"
 
 	"github.com/google/uuid"
 )
+
+// CreateProduct is the resolver for the createProduct field.
+func (r *mutationResolver) CreateProduct(ctx context.Context, data model.ProductReq) (*model.Product, error) {
+	product, err := r.Services.CreateProduct(ctx, data)
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
+}
+
+// UpdateProduct is the resolver for the updateProduct field.
+func (r *mutationResolver) UpdateProduct(ctx context.Context, id uuid.UUID, data model.ProductReq) (*model.Product, error) {
+	panic(fmt.Errorf("not implemented: UpdateProduct - updateProduct"))
+}
+
+// DeleteProduct is the resolver for the deleteProduct field.
+func (r *mutationResolver) DeleteProduct(ctx context.Context, id uuid.UUID) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteProduct - deleteProduct"))
+}
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
@@ -35,7 +56,11 @@ func (r *queryResolver) Product(ctx context.Context, id uuid.UUID) (*model.Produ
 	return product, nil
 }
 
+// Mutation returns runtime.MutationResolver implementation.
+func (r *Resolver) Mutation() runtime.MutationResolver { return &mutationResolver{r} }
+
 // Query returns runtime.QueryResolver implementation.
 func (r *Resolver) Query() runtime.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

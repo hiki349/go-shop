@@ -23,6 +23,9 @@ type CartItem struct {
 	Count    int       `json:"count"`
 }
 
+type Mutation struct {
+}
+
 type Product struct {
 	ID          uuid.UUID `json:"id"`
 	Title       string    `json:"title"`

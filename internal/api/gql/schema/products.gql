@@ -20,4 +20,8 @@ type Query {
   product(id: Uuid!): Product
 }
 
-# type Mutation {}
+type Mutation {
+  createProduct(data: ProductReq!): Product!
+  updateProduct(id: Uuid!, data: ProductReq!): Product!
+  deleteProduct(id: Uuid!): Boolean!
+}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"go-shop/internal/api/gql/model"
 	"go-shop/internal/domain/mapers"
-	"go-shop/internal/domain/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,7 +51,7 @@ func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) 
 	return &productDTO, nil
 }
 
-func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*models.Product, error) {
+func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*model.Product, error) {
 	updateProduct := mapers.FromReqToProduct(value)
 	updateProduct.ID = id
 	updateProduct.CreatedAt = time.Now()
@@ -62,7 +61,14 @@ func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value mode
 		return nil, err
 	}
 
-	return svc.repo.FindProductByID(ctx, productID)
+	product, err := svc.repo.FindProductByID(ctx, productID)
+	if err != nil {
+		return nil, err
+	}
+
+	productDTO := mapers.FromProductToDTO(*product)
+
+	return &productDTO, nil
 }
 
 func (svc *Services) DeleteProduct(ctx context.Context, id uuid.UUID) error {

@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 	"go-shop/internal/api/gql/model"
 	"go-shop/internal/api/gql/runtime"
 	"log/slog"
@@ -26,12 +25,22 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, data model.Product
 
 // UpdateProduct is the resolver for the updateProduct field.
 func (r *mutationResolver) UpdateProduct(ctx context.Context, id uuid.UUID, data model.ProductReq) (*model.Product, error) {
-	panic(fmt.Errorf("not implemented: UpdateProduct - updateProduct"))
+	product, err := r.Services.UpdateProduct(ctx, id, data)
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
 }
 
 // DeleteProduct is the resolver for the deleteProduct field.
 func (r *mutationResolver) DeleteProduct(ctx context.Context, id uuid.UUID) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteProduct - deleteProduct"))
+	err := r.Services.DeleteProduct(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // Products is the resolver for the products field.

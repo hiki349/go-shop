@@ -1,11 +1,11 @@
 type Product {
-  id: ID!
+  id: Uuid!
   title: String!
   imageUrl: String!
   description: String!
   price: Float!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 input ProductReq {

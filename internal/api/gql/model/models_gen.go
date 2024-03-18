@@ -2,29 +2,35 @@
 
 package model
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type Cart struct {
-	ID     string      `json:"id"`
+	ID     uuid.UUID   `json:"id"`
 	Items  []*CartItem `json:"items"`
 	Price  float64     `json:"price"`
 	UserID string      `json:"user_id"`
 }
 
 type CartItem struct {
-	ID       string  `json:"id"`
-	Title    string  `json:"title"`
-	ImageURL string  `json:"imageUrl"`
-	Price    float64 `json:"price"`
-	Count    int     `json:"count"`
+	ID       uuid.UUID `json:"id"`
+	Title    string    `json:"title"`
+	ImageURL string    `json:"imageUrl"`
+	Price    float64   `json:"price"`
+	Count    int       `json:"count"`
 }
 
 type Product struct {
-	ID          string  `json:"id"`
-	Title       string  `json:"title"`
-	ImageURL    string  `json:"imageUrl"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-	CreatedAt   string  `json:"createdAt"`
-	UpdatedAt   string  `json:"updatedAt"`
+	ID          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	ImageURL    string    `json:"imageUrl"`
+	Description string    `json:"description"`
+	Price       float64   `json:"price"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type ProductReq struct {
@@ -38,12 +44,12 @@ type Query struct {
 }
 
 type UserDto struct {
-	ID        string `json:"id"`
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type UserReq struct {

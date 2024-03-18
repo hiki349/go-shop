@@ -1,10 +1,10 @@
 type UserDto {
-  id: String!
+  id: Uuid!
   username: String!
   email: String!
   password: String!
-  created_at: String!
-  updated_at: String!
+  created_at: Time!
+  updated_at: Time!
 }
 
 input UserReq {

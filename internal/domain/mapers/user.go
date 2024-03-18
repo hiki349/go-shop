@@ -7,12 +7,12 @@ import (
 
 func FromUserToDTO(user models.User) model.UserDto {
 	return model.UserDto{
-		ID:        user.ID.String(),
+		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
-		CreatedAt: user.CreatedAt.String(),
-		UpdatedAt: user.UpdatetAt.String(),
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatetAt,
 	}
 }
 

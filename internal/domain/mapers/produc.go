@@ -7,13 +7,13 @@ import (
 
 func FromProductToDTO(product models.Product) model.Product {
 	return model.Product{
-		ID:          product.ID.String(),
+		ID:          product.ID,
 		Title:       product.Title,
 		ImageURL:    product.ImageURL,
 		Description: product.Description,
 		Price:       float64(product.Price / 100),
-		CreatedAt:   product.CreatedAt.String(),
-		UpdatedAt:   product.UpdatedAt.String(),
+		CreatedAt:   product.CreatedAt,
+		UpdatedAt:   product.UpdatedAt,
 	}
 }
 

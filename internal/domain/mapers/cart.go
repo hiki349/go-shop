@@ -15,7 +15,7 @@ func ToCartDTO(cart models.Cart) model.Cart {
 	}
 
 	return model.Cart{
-		ID:     cart.ID.String(),
+		ID:     cart.ID,
 		Items:  cartItemsDTO,
 		Price:  float64(cart.Price / 100),
 		UserID: cart.ID.String(),
@@ -24,7 +24,7 @@ func ToCartDTO(cart models.Cart) model.Cart {
 
 func toCartItemDTO(cartItem models.CartItem) *model.CartItem {
 	return &model.CartItem{
-		ID:       cartItem.ID.String(),
+		ID:       cartItem.ID,
 		Title:    cartItem.Title,
 		ImageURL: cartItem.ImageURL,
 		Price:    float64(cartItem.Price / 100),

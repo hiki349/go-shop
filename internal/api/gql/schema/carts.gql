@@ -1,12 +1,12 @@
 type Cart {
-  id: ID!
+  id: Uuid!
   items: [CartItem!]!
   price: Float!
   user_id: String!
 }
 
 type CartItem {
-  id: ID!
+  id: Uuid!
   title: String!
   imageUrl: String!
   price: Float!

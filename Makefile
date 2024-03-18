@@ -8,10 +8,10 @@ db-down:
 	@docker-compose down
 
 mgr-up:
-	@goose -dir migrations postgres "postgresql://goose:postgres@127.0.0.1:5432/shop-db" up
+	@goose -dir migrations postgres "postgresql://postgres:postgres@127.0.0.1:5432/shop-db" up
 
 mgr-down:
-	@goose -dir migrations postgres "postgresql://goose:postgres@127.0.0.1:5432/shop-db" down
+	@goose -dir migrations postgres "postgresql://postgres:postgres@127.0.0.1:5432/shop-db" down
 
 build:
 	@go build -o bin/go-shop cmd/main/main.go

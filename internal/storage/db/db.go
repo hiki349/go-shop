@@ -26,7 +26,6 @@ func newPostgres(ctx context.Context, connStr string) (*pgx.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close(ctx)
 
 	return conn, nil
 }

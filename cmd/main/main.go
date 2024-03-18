@@ -5,6 +5,7 @@ import (
 	"go-shop/configuration"
 	"go-shop/internal/api/gql/resolvers"
 	"go-shop/internal/api/gql/runtime"
+	"go-shop/internal/api/rest"
 	"go-shop/internal/domain/services"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
@@ -27,7 +28,8 @@ func main() {
 	repo := repo.New(db)
 	svc := services.New(repo)
 
-	log.Fatal(startGqlServer(svc, config.Port))
+	log.Fatal(startGqlServer(svc, config.GqlPort))
+	log.Fatal(startRestServer(svc, config.RestPort))
 }
 
 func startGqlServer(svc *services.Services, port string) error {
@@ -45,4 +47,10 @@ func startGqlServer(svc *services.Services, port string) error {
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 
 	return http.ListenAndServe(":"+port, nil)
+}
+
+func startRestServer(svc *services.Services, port string) error {
+	srv := rest.Init(port, svc)
+
+	return srv.ServeHTTP()
 }

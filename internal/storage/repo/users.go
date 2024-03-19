@@ -16,12 +16,12 @@ func (r Repo) FindUsers(ctx context.Context) ([]models.User, error) {
 
 	query := "Select id, username, email, password, created_at, updated_at FROM users;"
 
-	products, err := pgxutil.Select(ctx, r.db.Postgres, query, nil, pgx.RowToStructByPos[models.User])
+	users, err := pgxutil.Select(ctx, r.db.Postgres, query, nil, pgx.RowToStructByPos[models.User])
 	if err != nil {
 		return nil, err
 	}
 
-	return products, nil
+	return users, nil
 }
 
 func (r Repo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
@@ -33,12 +33,26 @@ func (r Repo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, err
 	FROM users
 	WHERE id = $1;`
 
-	product, err := pgxutil.SelectRow(ctx, r.db.Postgres, query, []any{id}, pgx.RowToStructByPos[models.User])
+	user, err := pgxutil.SelectRow(ctx, r.db.Postgres, query, []any{id}, pgx.RowToStructByPos[models.User])
 	if err != nil {
 		return nil, err
 	}
 
-	return &product, nil
+	return &user, nil
+}
+
+func (r Repo) FindUserByEmail(ctx context.Context, email string) (*models.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
+	defer cancel()
+
+	query := `Select
+	id, username, email, password, created_at, updated_at
+	FROM users
+	WHERE email = $1;`
+
+	user, err := pgxutil.SelectRow(ctx, r.db.Postgres, query, []any{email}, pgx.RowToStructByPos[models.User])
+
+	return &user, err
 }
 
 func (r *Repo) CreateUser(ctx context.Context, values models.User) (uuid.UUID, error) {

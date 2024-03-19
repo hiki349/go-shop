@@ -24,6 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Postgres.Close(context.Background())
 
 	repo := repo.New(db)
 	svc := services.New(repo)

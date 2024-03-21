@@ -15,7 +15,7 @@ import (
 
 // CreateProduct is the resolver for the createProduct field.
 func (r *mutationResolver) CreateProduct(ctx context.Context, data model.ProductReq) (*model.Product, error) {
-	product, err := r.Services.CreateProduct(ctx, data)
+	product, err := r.ProductsService.CreateProduct(ctx, data)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, data model.Product
 
 // UpdateProduct is the resolver for the updateProduct field.
 func (r *mutationResolver) UpdateProduct(ctx context.Context, id uuid.UUID, data model.ProductReq) (*model.Product, error) {
-	product, err := r.Services.UpdateProduct(ctx, id, data)
+	product, err := r.ProductsService.UpdateProduct(ctx, id, data)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, id uuid.UUID, data
 
 // DeleteProduct is the resolver for the deleteProduct field.
 func (r *mutationResolver) DeleteProduct(ctx context.Context, id uuid.UUID) (bool, error) {
-	err := r.Services.DeleteProduct(ctx, id)
+	err := r.ProductsService.DeleteProduct(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -45,7 +45,7 @@ func (r *mutationResolver) DeleteProduct(ctx context.Context, id uuid.UUID) (boo
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
-	products, err := r.Services.GetProducts(ctx)
+	products, err := r.ProductsService.GetProducts(ctx)
 	if err != nil {
 		slog.Info("error: ", err)
 		return nil, err
@@ -56,7 +56,7 @@ func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) 
 
 // Product is the resolver for the product field.
 func (r *queryResolver) Product(ctx context.Context, id uuid.UUID) (*model.Product, error) {
-	product, err := r.Services.GetProduct(ctx, id)
+	product, err := r.ProductsService.GetProduct(ctx, id)
 	if err != nil {
 		slog.Info("error: ", err)
 		return nil, err

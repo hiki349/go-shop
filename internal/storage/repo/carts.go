@@ -3,13 +3,28 @@ package repo
 import (
 	"context"
 	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/db"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
 )
 
-func (r Repo) FindCarts(ctx context.Context) ([]models.Cart, error) {
+type CartsRepo struct {
+	db *db.DB
+}
+
+type ICartsRepo interface {
+	FindCarts(ctx context.Context) ([]models.Cart, error)
+	FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, error)
+	CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error)
+}
+
+func NewCartsRepo(db *db.DB) *CartsRepo {
+	return &CartsRepo{db}
+}
+
+func (r CartsRepo) FindCarts(ctx context.Context) ([]models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -27,7 +42,7 @@ func (r Repo) FindCarts(ctx context.Context) ([]models.Cart, error) {
 	return products, nil
 }
 
-func (r Repo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
+func (r CartsRepo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -46,7 +61,7 @@ func (r Repo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, err
 	return &product, nil
 }
 
-func (r *Repo) CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
+func (r *CartsRepo) CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

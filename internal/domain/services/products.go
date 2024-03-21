@@ -4,12 +4,21 @@ import (
 	"context"
 	"go-shop/internal/api/gql/model"
 	"go-shop/internal/domain/mapers"
+	"go-shop/internal/storage/repo"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-func (svc Services) GetProducts(ctx context.Context) ([]*model.Product, error) {
+type ProductsService struct {
+	repo repo.IProductsRepo
+}
+
+func NewProductsService(repo repo.IProductsRepo) *ProductsService {
+	return &ProductsService{repo}
+}
+
+func (svc ProductsService) GetProducts(ctx context.Context) ([]*model.Product, error) {
 	products, err := svc.repo.FindProducts(ctx)
 	if err != nil {
 		return nil, err
@@ -20,7 +29,7 @@ func (svc Services) GetProducts(ctx context.Context) ([]*model.Product, error) {
 	return productsDTO, nil
 }
 
-func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*model.Product, error) {
+func (svc ProductsService) GetProduct(ctx context.Context, productID uuid.UUID) (*model.Product, error) {
 	product, err := svc.repo.FindProductByID(ctx, productID)
 	if err != nil {
 		return nil, err
@@ -31,7 +40,7 @@ func (svc Services) GetProduct(ctx context.Context, productID uuid.UUID) (*model
 	return &productDTO, nil
 }
 
-func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) (*model.Product, error) {
+func (svc ProductsService) CreateProduct(ctx context.Context, value model.ProductReq) (*model.Product, error) {
 	newProduct := mapers.FromReqToProduct(value)
 	newProduct.ID = uuid.New()
 	newProduct.CreatedAt = time.Now()
@@ -51,7 +60,7 @@ func (svc *Services) CreateProduct(ctx context.Context, value model.ProductReq) 
 	return &productDTO, nil
 }
 
-func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*model.Product, error) {
+func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*model.Product, error) {
 	updateProduct := mapers.FromReqToProduct(value)
 	updateProduct.ID = id
 	updateProduct.CreatedAt = time.Now()
@@ -71,7 +80,7 @@ func (svc *Services) UpdateProduct(ctx context.Context, id uuid.UUID, value mode
 	return &productDTO, nil
 }
 
-func (svc *Services) DeleteProduct(ctx context.Context, id uuid.UUID) error {
+func (svc ProductsService) DeleteProduct(ctx context.Context, id uuid.UUID) error {
 	err := svc.repo.DeleteProduct(ctx, id)
 	if err != nil {
 		return err

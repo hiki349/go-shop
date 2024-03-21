@@ -7,5 +7,7 @@ import "go-shop/internal/domain/services"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	*services.Services
+	*services.UsersService
+	*services.CartsService
+	*services.ProductsService
 }

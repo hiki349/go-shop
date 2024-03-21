@@ -3,11 +3,20 @@ package services
 import (
 	"context"
 	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/repo"
 
 	"github.com/google/uuid"
 )
 
-func (svc Services) GetCarts(ctx context.Context) ([]models.Cart, error) {
+type CartsService struct {
+	repo repo.ICartsRepo
+}
+
+func NewCartsService(repo repo.ICartsRepo) *CartsService {
+	return &CartsService{repo}
+}
+
+func (svc CartsService) GetCarts(ctx context.Context) ([]models.Cart, error) {
 	carts, err := svc.repo.FindCarts(ctx)
 	if err != nil {
 		return nil, err
@@ -16,7 +25,7 @@ func (svc Services) GetCarts(ctx context.Context) ([]models.Cart, error) {
 	return carts, nil
 }
 
-func (svc Services) GetCart(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
+func (svc CartsService) GetCart(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
 	cart, err := svc.repo.FindCartByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -25,7 +34,7 @@ func (svc Services) GetCart(ctx context.Context, id uuid.UUID) (*models.Cart, er
 	return cart, nil
 }
 
-func (svc *Services) CreateCart(ctx context.Context, userID uuid.UUID) (*models.Cart, error) {
+func (svc CartsService) CreateCart(ctx context.Context, userID uuid.UUID) (*models.Cart, error) {
 	cartID := uuid.New()
 	cartIDFromDB, err := svc.repo.CreateCart(ctx, cartID, userID)
 	if err != nil {

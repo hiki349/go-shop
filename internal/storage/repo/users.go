@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/db"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,7 +11,24 @@ import (
 	"github.com/jackc/pgxutil"
 )
 
-func (r Repo) FindUsers(ctx context.Context) ([]models.User, error) {
+type UsersRepo struct {
+	db *db.DB
+}
+
+type IUsersRepo interface {
+	FindUsers(ctx context.Context) ([]models.User, error)
+	FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, error)
+	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
+	CreateUser(ctx context.Context, data models.User) (uuid.UUID, error)
+	UpdateUser(ctx context.Context, data models.User) (uuid.UUID, error)
+	DeleteUser(ctx context.Context, id uuid.UUID) error
+}
+
+func NewUsersRepo(db *db.DB) *UsersRepo {
+	return &UsersRepo{db}
+}
+
+func (r UsersRepo) FindUsers(ctx context.Context) ([]models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -24,7 +42,7 @@ func (r Repo) FindUsers(ctx context.Context) ([]models.User, error) {
 	return users, nil
 }
 
-func (r Repo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+func (r UsersRepo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -41,7 +59,7 @@ func (r Repo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, err
 	return &user, nil
 }
 
-func (r Repo) FindUserByEmail(ctx context.Context, email string) (*models.User, error) {
+func (r UsersRepo) FindUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -55,7 +73,7 @@ func (r Repo) FindUserByEmail(ctx context.Context, email string) (*models.User, 
 	return &user, err
 }
 
-func (r *Repo) CreateUser(ctx context.Context, values models.User) (uuid.UUID, error) {
+func (r *UsersRepo) CreateUser(ctx context.Context, values models.User) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -80,7 +98,7 @@ func (r *Repo) CreateUser(ctx context.Context, values models.User) (uuid.UUID, e
 	return userID, nil
 }
 
-func (r *Repo) UpdateUser(ctx context.Context, values models.User) (uuid.UUID, error) {
+func (r *UsersRepo) UpdateUser(ctx context.Context, values models.User) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -103,7 +121,7 @@ func (r *Repo) UpdateUser(ctx context.Context, values models.User) (uuid.UUID, e
 	return values.ID, nil
 }
 
-func (r *Repo) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (r *UsersRepo) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

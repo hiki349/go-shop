@@ -26,18 +26,32 @@ func main() {
 	}
 	defer db.Postgres.Close(context.Background())
 
-	repo := repo.New(db)
-	svc := services.New(repo)
+	productsRepo := repo.NewProductsRepo(db)
+	cartsRepo := repo.NewCartsRepo(db)
+	userssRepo := repo.NewUsersRepo(db)
 
-	go mustStartRestServer(svc, config.RestPort)
-	mustStartGqlServer(svc, config.GqlPort)
+	productsService := services.NewProductsService(productsRepo)
+	cartsService := services.NewCartsService(cartsRepo)
+	usersService := services.NewUsersService(userssRepo)
+
+	go mustStartRestServer(usersService, config.RestPort)
+	mustStartGqlServer(productsService, cartsService, usersService, config.GqlPort)
 }
 
-func mustStartGqlServer(svc *services.Services, port string) {
+func mustStartGqlServer(
+	productsService *services.ProductsService,
+	cartsService *services.CartsService,
+	usersService *services.UsersService,
+	port string,
+) {
 	srv := handler.NewDefaultServer(
 		runtime.NewExecutableSchema(
 			runtime.Config{
-				Resolvers: &resolvers.Resolver{Services: svc},
+				Resolvers: &resolvers.Resolver{
+					ProductsService: productsService,
+					CartsService:    cartsService,
+					UsersService:    usersService,
+				},
 			},
 		),
 	)
@@ -50,7 +64,7 @@ func mustStartGqlServer(svc *services.Services, port string) {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func mustStartRestServer(svc *services.Services, port string) {
+func mustStartRestServer(svc *services.UsersService, port string) {
 	srv := rest.Init(port, svc)
 
 	log.Fatal(srv.ServeHTTP())

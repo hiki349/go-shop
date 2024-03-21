@@ -4,7 +4,12 @@ import (
 	"context"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/pkg/token"
+	"go-shop/internal/storage/repo"
 )
+
+type AuthService struct {
+	repo repo.IUsersRepo
+}
 
 type AuthResult struct {
 	Token        string
@@ -13,7 +18,7 @@ type AuthResult struct {
 	Err          error
 }
 
-func (svc *Services) Login(ctx context.Context, email, password string) *AuthResult {
+func (svc AuthService) Login(ctx context.Context, email, password string) *AuthResult {
 	user, err := svc.repo.FindUserByEmail(ctx, email)
 	if err != nil {
 		return &AuthResult{Err: err}

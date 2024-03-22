@@ -7,6 +7,7 @@ import (
 	"go-shop/internal/api/gql/runtime"
 	"go-shop/internal/api/rest"
 	"go-shop/internal/domain/services"
+	"go-shop/internal/pkg/logger"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
 	"log"
@@ -19,6 +20,9 @@ import (
 
 func main() {
 	config := configuration.MustGetConfig()
+
+	clog := logger.New(config.Mode)
+	clog.Info("Hello world")
 
 	db, err := db.New(context.Background(), config.ConnStr)
 	if err != nil {
@@ -34,7 +38,7 @@ func main() {
 	cartsService := services.NewCartsService(cartsRepo)
 	usersService := services.NewUsersService(userssRepo)
 
-	go mustStartRestServer(usersService, config.RestPort)
+	go rest.MustStartRestServer(usersService, config.RestPort, clog)
 	mustStartGqlServer(productsService, cartsService, usersService, config.GqlPort)
 }
 
@@ -62,10 +66,4 @@ func mustStartGqlServer(
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))
-}
-
-func mustStartRestServer(svc *services.UsersService, port string) {
-	srv := rest.Init(port, svc)
-
-	log.Fatal(srv.ServeHTTP())
 }

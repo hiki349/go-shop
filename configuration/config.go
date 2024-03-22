@@ -12,6 +12,7 @@ type Config struct {
 	RestPort  string
 	ConnStr   string
 	JwtSecret string
+	Mode      string
 }
 
 func MustGetConfig() Config {
@@ -24,11 +25,13 @@ func MustGetConfig() Config {
 	restPort := os.Getenv("REST_PORT")
 	connStr := os.Getenv("CONNECTION_STRING")
 	jwtSecret := os.Getenv("JWT_SECRET")
+	mode := os.Getenv("MODE")
 
 	return Config{
 		GqlPort:   gqlPort,
 		RestPort:  restPort,
 		ConnStr:   connStr,
 		JwtSecret: jwtSecret,
+		Mode:      mode,
 	}
 }

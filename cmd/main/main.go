@@ -14,9 +14,7 @@ import (
 
 func main() {
 	config := configuration.MustGetConfig()
-
 	clog := logger.New(config.Mode)
-	clog.Info("Hello world")
 
 	db, err := db.New(context.Background(), config.ConnStr)
 	if err != nil {

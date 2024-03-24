@@ -2,20 +2,24 @@ package handlers
 
 import (
 	"go-shop/internal/domain/services"
-	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
-	svc *services.UsersService
+	svc    *services.UsersService
+	router *chi.Mux
 }
 
-func Init(svc *services.UsersService) *Handler {
+func Init(svc *services.UsersService, router *chi.Mux) *Handler {
 	return &Handler{
-		svc: svc,
+		svc:    svc,
+		router: router,
 	}
 }
 
 func (h *Handler) CreateRouter() {
-	http.HandleFunc("POST /login", h.login)
-	http.HandleFunc("POST /logout", h.logout)
+	h.router.Post("/login", h.login)
+	h.router.Post("/logout", h.logout)
+	h.router.Get("/token", h.getAccessToken)
 }

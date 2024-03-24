@@ -6,6 +6,8 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Rest struct {
@@ -21,11 +23,13 @@ func MustStartRestServer(svc *services.UsersService, port string, clog *slog.Log
 		clog: clog,
 	}
 
+	log.Printf("connect to http://localhost%s/ for rest server", port)
 	log.Fatal(srv.ServeHTTP())
 }
 
 func (r *Rest) ServeHTTP() error {
-	handlers.Init(r.svc).CreateRouter()
+	router := chi.NewRouter()
+	handlers.Init(r.svc, router).CreateRouter()
 
-	return http.ListenAndServe(r.port, nil)
+	return http.ListenAndServe(r.port, router)
 }

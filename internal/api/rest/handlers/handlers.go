@@ -7,11 +7,11 @@ import (
 )
 
 type Handler struct {
-	svc    *services.UsersService
+	svc    *services.AuthService
 	router *chi.Mux
 }
 
-func Init(svc *services.UsersService, router *chi.Mux) *Handler {
+func Init(svc *services.AuthService, router *chi.Mux) *Handler {
 	return &Handler{
 		svc:    svc,
 		router: router,

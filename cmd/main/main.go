@@ -29,7 +29,8 @@ func main() {
 	productsService := services.NewProductsService(productsRepo)
 	cartsService := services.NewCartsService(cartsRepo)
 	usersService := services.NewUsersService(userssRepo)
+	authService := services.NewAuthService(userssRepo, config.JwtSecret)
 
-	go rest.MustStartRestServer(usersService, config.RestPort, clog)
+	go rest.MustStartRestServer(authService, config.RestPort, clog)
 	gql.MustStartGqlServer(productsService, cartsService, usersService, config.GqlPort)
 }

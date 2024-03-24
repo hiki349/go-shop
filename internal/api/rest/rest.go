@@ -12,11 +12,11 @@ import (
 
 type Rest struct {
 	port string
-	svc  *services.UsersService
+	svc  *services.AuthService
 	clog *slog.Logger
 }
 
-func MustStartRestServer(svc *services.UsersService, port string, clog *slog.Logger) {
+func MustStartRestServer(svc *services.AuthService, port string, clog *slog.Logger) {
 	srv := &Rest{
 		port: port,
 		svc:  svc,

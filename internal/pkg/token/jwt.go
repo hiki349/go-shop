@@ -8,44 +8,39 @@ import (
 	"github.com/google/uuid"
 )
 
-func CreateRefreshToken(secret string) (string, error) {
+func CreateRefreshToken(userID uuid.UUID, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodES256,
 		jwt.MapClaims{
 			"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
 		})
-
+	token.Header["id"] = userID
 	tokenString, err := token.SignedString(secret)
 
 	return tokenString, err
 }
 
-func CreateAccessToken(userID uuid.UUID, refreshToken, secret string) (string, error) {
-	if err := VerifyToken(refreshToken, secret); err != nil {
-		return "", fmt.Errorf("invalid refresh token")
-	}
-
+func CreateAccessToken(refreshToken *jwt.Token, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodES256,
 		jwt.MapClaims{
-			"id":  userID,
 			"exp": time.Now().Add(time.Minute * 15).Unix(),
 		})
-
+	token.Header["id"] = refreshToken.Header["id"]
 	tokenString, err := token.SignedString(secret)
 
 	return tokenString, err
 }
 
-func VerifyToken(tokenString string, secret string) error {
+func VerifyToken(tokenString string, secret string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !token.Valid {
-		return fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token")
 	}
 
-	return nil
+	return token, nil
 }

@@ -1,0 +1,25 @@
+extend type Query {
+    products: ProductsQuery!
+}
+
+type ProductsQuery {
+	findAll: ProductsResult!
+	find(id: Uuid!): ProductOk!
+}
+
+type ProductsOk {
+	products: [Product!]!
+}
+
+type ProductOk {
+	product: Product!
+}
+
+union ProductsResult =
+	| InternalErrorProblem
+	| ProductsOk
+
+union ProductResult = 
+	| ProductNotFound
+	| InternalErrorProblem
+	| ProductOk

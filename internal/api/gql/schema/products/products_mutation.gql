@@ -1,0 +1,44 @@
+extend type Mutation {
+	product: ProductsMutation!
+}
+
+type ProductsMutation {
+	create(
+		input: ProductInput!
+	): ProductsCreateResult! @goField(forceResolver: true)
+
+	update(
+		id: Uuid!
+		data: ProductInput!
+	): ProductsUpdateResult! @goField(forceResolver: true)
+
+	delete(
+		id: Uuid!
+	): ProductsDeleteResult! @goField(forceResolver: true)
+}
+
+type ProductCreateOk {
+	product: Product!
+}
+
+type ProductUpdateOk {
+	product: Product!
+}
+
+type ProductDeleteOk {
+	productId: Uuid!
+}
+
+union ProductsCreateResult =
+	| InternalErrorProblem
+	| ProductCreateOk
+
+union ProductsUpdateResult = 
+	| ProductNotFound
+	| InternalErrorProblem
+	| ProductUpdateOk
+
+union ProductsDeleteResult = 
+	| ProductNotFound
+	| InternalErrorProblem
+	| ProductDeleteOk

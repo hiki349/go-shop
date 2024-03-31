@@ -9,22 +9,27 @@ import (
 	"go-shop/internal/pkg/logger"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
-	"log"
 )
 
 func main() {
 	config := configuration.MustGetConfig()
 	clog := logger.New(config.Mode)
 
-	db, err := db.New(context.Background(), config.ConnStr)
+	postgres, err := db.NewPostgres(context.Background(), config.ConnStrPostgres)
+	defer postgres.Close(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		clog.Error("%w", err)
 	}
-	defer db.Postgres.Close(context.Background())
 
-	productsRepo := repo.NewProductsRepo(db)
-	cartsRepo := repo.NewCartsRepo(db)
-	usersRepo := repo.NewUsersRepo(db)
+	mongo, err := db.NewMongo(context.Background(), config.ConnStrMongo)
+	defer mongo.Disconnect(context.Background())
+	if err != nil {
+		clog.Error("%w", err)
+	}
+
+	productsRepo := repo.NewProductsRepo(postgres)
+	cartsRepo := repo.NewCartsRepo(postgres)
+	usersRepo := repo.NewUsersRepo(postgres)
 
 	productsService := services.NewProductsService(productsRepo)
 	cartsService := services.NewCartsService(cartsRepo)

@@ -11,7 +11,7 @@ import (
 )
 
 type CartsRepo struct {
-	db *db.DB
+	db *db.Postgres
 }
 
 type ICartsRepo interface {
@@ -20,7 +20,7 @@ type ICartsRepo interface {
 	CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error)
 }
 
-func NewCartsRepo(db *db.DB) *CartsRepo {
+func NewCartsRepo(db *db.Postgres) *CartsRepo {
 	return &CartsRepo{db}
 }
 
@@ -34,7 +34,7 @@ func (r CartsRepo) FindCarts(ctx context.Context) ([]models.Cart, error) {
 	INNER JOIN cart_items
 	ON cart_items.cart_id = carts.id`
 
-	products, err := pgxutil.Select(ctx, r.db.Postgres, query, nil, pgx.RowToStructByPos[models.Cart])
+	products, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.Cart])
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (r CartsRepo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart
 	INNER JOIN cart_items
 	ON cart_items.cart_id = carts.id`
 
-	product, err := pgxutil.SelectRow(ctx, r.db.Postgres, query, []any{id}, pgx.RowToStructByPos[models.Cart])
+	product, err := pgxutil.SelectRow(ctx, r.db, query, []any{id}, pgx.RowToStructByPos[models.Cart])
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (r *CartsRepo) CreateCart(ctx context.Context, cartID, userID uuid.UUID) (u
 	sql := "INSERT INTO carts (id, user_id) VALUES ($1, $2);"
 
 	_, err := pgxutil.ExecRow(
-		ctx, r.db.Postgres, sql,
+		ctx, r.db, sql,
 		cartID,
 		userID,
 	)

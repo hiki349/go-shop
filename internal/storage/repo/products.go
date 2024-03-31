@@ -12,7 +12,7 @@ import (
 )
 
 type ProductsRepo struct {
-	db *db.DB
+	db *db.Postgres
 }
 
 type IProductsRepo interface {
@@ -23,7 +23,7 @@ type IProductsRepo interface {
 	DeleteProduct(ctx context.Context, id uuid.UUID) error
 }
 
-func NewProductsRepo(db *db.DB) *ProductsRepo {
+func NewProductsRepo(db *db.Postgres) *ProductsRepo {
 	return &ProductsRepo{db}
 }
 
@@ -33,7 +33,7 @@ func (r ProductsRepo) FindProducts(ctx context.Context) ([]models.Product, error
 
 	query := "Select id, title, image_url, description, price, created_at, updated_at FROM products;"
 
-	products, err := pgxutil.Select[models.Product](ctx, r.db.Postgres, query, nil, pgx.RowToStructByPos)
+	products, err := pgxutil.Select[models.Product](ctx, r.db, query, nil, pgx.RowToStructByPos)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (r ProductsRepo) FindProductByID(ctx context.Context, id uuid.UUID) (*model
 	FROM products
 	WHERE id = $1;`
 
-	product, err := pgxutil.SelectRow[models.Product](ctx, r.db.Postgres, query, []any{id}, pgx.RowToStructByPos)
+	product, err := pgxutil.SelectRow[models.Product](ctx, r.db, query, []any{id}, pgx.RowToStructByPos)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (r *ProductsRepo) CreateProduct(ctx context.Context, values models.Product)
 	VALUES ($1, $2, $3, $4, $5, $6);`
 
 	_, err := pgxutil.ExecRow(
-		ctx, r.db.Postgres, sql,
+		ctx, r.db, sql,
 		values.ID,
 		values.Title,
 		values.ImageURL,
@@ -91,7 +91,7 @@ func (r *ProductsRepo) UpdateProduct(ctx context.Context, values models.Product)
 	WHERE id = $1;`
 
 	_, err := pgxutil.ExecRow(
-		ctx, r.db.Postgres, sql,
+		ctx, r.db, sql,
 		values.ID,
 		values.Title,
 		values.ImageURL,
@@ -111,7 +111,7 @@ func (r *ProductsRepo) DeleteProduct(ctx context.Context, id uuid.UUID) error {
 
 	sql := "DELETE FROM products WHERE id = $1;"
 
-	_, err := pgxutil.ExecRow(ctx, r.db.Postgres, sql, id)
+	_, err := pgxutil.ExecRow(ctx, r.db, sql, id)
 	if err != nil {
 		return err
 	}

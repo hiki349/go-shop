@@ -12,7 +12,7 @@ import (
 )
 
 type UsersRepo struct {
-	db *db.DB
+	db *db.Postgres
 }
 
 type IUsersRepo interface {
@@ -24,7 +24,7 @@ type IUsersRepo interface {
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 }
 
-func NewUsersRepo(db *db.DB) *UsersRepo {
+func NewUsersRepo(db *db.Postgres) *UsersRepo {
 	return &UsersRepo{db}
 }
 
@@ -34,7 +34,7 @@ func (r UsersRepo) FindUsers(ctx context.Context) ([]models.User, error) {
 
 	query := "Select id, username, email, password, created_at, updated_at FROM users;"
 
-	users, err := pgxutil.Select(ctx, r.db.Postgres, query, nil, pgx.RowToStructByPos[models.User])
+	users, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.User])
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (r UsersRepo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User
 	FROM users
 	WHERE id = $1;`
 
-	user, err := pgxutil.SelectRow(ctx, r.db.Postgres, query, []any{id}, pgx.RowToStructByPos[models.User])
+	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{id}, pgx.RowToStructByPos[models.User])
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (r UsersRepo) FindUserByEmail(ctx context.Context, email string) (*models.U
 	FROM users
 	WHERE email = $1;`
 
-	user, err := pgxutil.SelectRow(ctx, r.db.Postgres, query, []any{email}, pgx.RowToStructByPos[models.User])
+	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{email}, pgx.RowToStructByPos[models.User])
 
 	return &user, err
 }
@@ -83,7 +83,7 @@ func (r *UsersRepo) CreateUser(ctx context.Context, values models.User) (uuid.UU
 
 	userID := uuid.New()
 	_, err := pgxutil.ExecRow(
-		ctx, r.db.Postgres, sql,
+		ctx, r.db, sql,
 		userID,
 		values.Username,
 		values.Email,
@@ -107,7 +107,7 @@ func (r *UsersRepo) UpdateUser(ctx context.Context, values models.User) (uuid.UU
 	WHERE id = $1;`
 
 	_, err := pgxutil.ExecRow(
-		ctx, r.db.Postgres, sql,
+		ctx, r.db, sql,
 		values.ID,
 		values.Username,
 		values.Email,
@@ -127,7 +127,7 @@ func (r *UsersRepo) DeleteUser(ctx context.Context, id uuid.UUID) error {
 
 	sql := "DELETE FROM users WHERE id = $1;"
 
-	_, err := pgxutil.ExecRow(ctx, r.db.Postgres, sql, id)
+	_, err := pgxutil.ExecRow(ctx, r.db, sql, id)
 	if err != nil {
 		return err
 	}

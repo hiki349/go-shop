@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	GqlPort   string
-	RestPort  string
-	ConnStr   string
-	JwtSecret string
-	Mode      string
+	GqlPort         string
+	RestPort        string
+	ConnStrPostgres string
+	ConnStrMongo    string
+	JwtSecret       string
+	Mode            string
 }
 
 func MustGetConfig() Config {
@@ -23,15 +24,17 @@ func MustGetConfig() Config {
 
 	gqlPort := os.Getenv("GQL_PORT")
 	restPort := os.Getenv("REST_PORT")
-	connStr := os.Getenv("CONNECTION_STRING")
+	connStrPostgres := os.Getenv("CONNECTION_STRING_POSTGRES")
+	connStrMongo := os.Getenv("CONNECTION_STRING_MONGO")
 	jwtSecret := os.Getenv("JWT_SECRET")
 	mode := os.Getenv("MODE")
 
 	return Config{
-		GqlPort:   gqlPort,
-		RestPort:  restPort,
-		ConnStr:   connStr,
-		JwtSecret: jwtSecret,
-		Mode:      mode,
+		GqlPort:         gqlPort,
+		RestPort:        restPort,
+		ConnStrPostgres: connStrPostgres,
+		ConnStrMongo:    connStrMongo,
+		JwtSecret:       jwtSecret,
+		Mode:            mode,
 	}
 }

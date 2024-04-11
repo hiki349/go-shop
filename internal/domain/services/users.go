@@ -20,7 +20,7 @@ func NewUsersService(repo repo.IUsersRepo) *UsersService {
 }
 
 func (svc UsersService) GetUsers(ctx context.Context) ([]models.User, error) {
-	users, err := svc.repo.FindUsers(ctx)
+	users, err := svc.repo.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (svc UsersService) GetUsers(ctx context.Context) ([]models.User, error) {
 }
 
 func (svc UsersService) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
-	user, err := svc.repo.FindUserByID(ctx, id)
+	user, err := svc.repo.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -42,12 +42,12 @@ func (svc *UsersService) CreateUser(ctx context.Context, value model.UserReq) (*
 	newUser.ID = uuid.New()
 	newUser.CreatedAt = time.Now()
 
-	userID, err := svc.repo.CreateUser(ctx, newUser)
+	userID, err := svc.repo.Create(ctx, newUser)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := svc.repo.FindUserByID(ctx, userID)
+	user, err := svc.repo.FindByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -60,12 +60,12 @@ func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value mod
 	updateUser.ID = uuid.New()
 	updateUser.UpdatetAt = time.Now()
 
-	userID, err := svc.repo.UpdateUser(ctx, updateUser)
+	userID, err := svc.repo.Update(ctx, updateUser)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := svc.repo.FindUserByID(ctx, userID)
+	user, err := svc.repo.FindByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value mod
 }
 
 func (svc *UsersService) DeleteUser(ctx context.Context, id uuid.UUID) error {
-	err := svc.repo.DeleteUser(ctx, id)
+	err := svc.repo.Delete(ctx, id)
 	if err != nil {
 		return err
 	}

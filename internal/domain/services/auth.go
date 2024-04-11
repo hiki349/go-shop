@@ -20,7 +20,7 @@ func NewAuthService(repo repo.IUsersRepo, secret string) *AuthService {
 }
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (string, error) {
-	user, err := s.repo.FindUserByEmail(ctx, email)
+	user, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
 		return "", err
 	}

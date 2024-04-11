@@ -11,7 +11,7 @@ type TokensRepo struct {
 }
 
 type ITokensRepo interface {
-	Exists(token string) (bool, error)
+	Exists(token string) error
 	Add(token string) error
 }
 
@@ -21,7 +21,7 @@ func NewTokensRepo(client *mongo.Client) *TokensRepo {
 	}
 }
 
-func (r *TokensRepo) Exists(ctx context.Context, token string) (bool, error) {
+func (r *TokensRepo) Exists(ctx context.Context, token string) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -29,10 +29,10 @@ func (r *TokensRepo) Exists(ctx context.Context, token string) (bool, error) {
 
 	res := collection.FindOne(ctx, token)
 	if err := res.Err(); err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }
 
 func (r *TokensRepo) Add(ctx context.Context, token string) error {

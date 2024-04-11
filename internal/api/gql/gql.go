@@ -5,6 +5,7 @@ import (
 	"go-shop/internal/api/gql/runtime"
 	"go-shop/internal/domain/services"
 	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -15,6 +16,7 @@ func MustStartGqlServer(
 	productsService *services.ProductsService,
 	cartsService *services.CartsService,
 	usersService *services.UsersService,
+	clog *slog.Logger,
 	port string,
 ) {
 	srv := handler.NewDefaultServer(

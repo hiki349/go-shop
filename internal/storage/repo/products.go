@@ -16,18 +16,18 @@ type ProductsRepo struct {
 }
 
 type IProductsRepo interface {
-	FindProducts(ctx context.Context) ([]models.Product, error)
-	FindProductByID(ctx context.Context, id uuid.UUID) (*models.Product, error)
-	CreateProduct(ctx context.Context, data models.Product) (uuid.UUID, error)
-	UpdateProduct(ctx context.Context, data models.Product) (uuid.UUID, error)
-	DeleteProduct(ctx context.Context, id uuid.UUID) error
+	FindAll(ctx context.Context) ([]models.Product, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*models.Product, error)
+	Create(ctx context.Context, data models.Product) (uuid.UUID, error)
+	Update(ctx context.Context, data models.Product) (uuid.UUID, error)
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 func NewProductsRepo(db *db.Postgres) *ProductsRepo {
 	return &ProductsRepo{db}
 }
 
-func (r ProductsRepo) FindProducts(ctx context.Context) ([]models.Product, error) {
+func (r ProductsRepo) FindAll(ctx context.Context) ([]models.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -41,7 +41,7 @@ func (r ProductsRepo) FindProducts(ctx context.Context) ([]models.Product, error
 	return products, nil
 }
 
-func (r ProductsRepo) FindProductByID(ctx context.Context, id uuid.UUID) (*models.Product, error) {
+func (r ProductsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -58,7 +58,7 @@ func (r ProductsRepo) FindProductByID(ctx context.Context, id uuid.UUID) (*model
 	return &product, nil
 }
 
-func (r *ProductsRepo) CreateProduct(ctx context.Context, values models.Product) (uuid.UUID, error) {
+func (r *ProductsRepo) Create(ctx context.Context, values models.Product) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -82,7 +82,7 @@ func (r *ProductsRepo) CreateProduct(ctx context.Context, values models.Product)
 	return values.ID, nil
 }
 
-func (r *ProductsRepo) UpdateProduct(ctx context.Context, values models.Product) (uuid.UUID, error) {
+func (r *ProductsRepo) Update(ctx context.Context, values models.Product) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -105,7 +105,7 @@ func (r *ProductsRepo) UpdateProduct(ctx context.Context, values models.Product)
 	return values.ID, nil
 }
 
-func (r *ProductsRepo) DeleteProduct(ctx context.Context, id uuid.UUID) error {
+func (r *ProductsRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

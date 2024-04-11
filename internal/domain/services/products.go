@@ -19,7 +19,7 @@ func NewProductsService(repo repo.IProductsRepo) *ProductsService {
 }
 
 func (svc ProductsService) GetProducts(ctx context.Context) ([]*model.Product, error) {
-	products, err := svc.repo.FindProducts(ctx)
+	products, err := svc.repo.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (svc ProductsService) GetProducts(ctx context.Context) ([]*model.Product, e
 }
 
 func (svc ProductsService) GetProduct(ctx context.Context, productID uuid.UUID) (*model.Product, error) {
-	product, err := svc.repo.FindProductByID(ctx, productID)
+	product, err := svc.repo.FindByID(ctx, productID)
 	if err != nil {
 		return nil, err
 	}
@@ -40,17 +40,17 @@ func (svc ProductsService) GetProduct(ctx context.Context, productID uuid.UUID) 
 	return &productDTO, nil
 }
 
-func (svc ProductsService) CreateProduct(ctx context.Context, value model.ProductReq) (*model.Product, error) {
+func (svc ProductsService) CreateProduct(ctx context.Context, value model.Product) (*model.Product, error) {
 	newProduct := mapers.FromReqToProduct(value)
 	newProduct.ID = uuid.New()
 	newProduct.CreatedAt = time.Now()
 
-	productID, err := svc.repo.CreateProduct(ctx, newProduct)
+	productID, err := svc.repo.Create(ctx, newProduct)
 	if err != nil {
 		return nil, err
 	}
 
-	product, err := svc.repo.FindProductByID(ctx, productID)
+	product, err := svc.repo.FindByID(ctx, productID)
 	if err != nil {
 		return nil, err
 	}
@@ -60,17 +60,17 @@ func (svc ProductsService) CreateProduct(ctx context.Context, value model.Produc
 	return &productDTO, nil
 }
 
-func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value model.ProductReq) (*model.Product, error) {
+func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value model.Product) (*model.Product, error) {
 	updateProduct := mapers.FromReqToProduct(value)
 	updateProduct.ID = id
 	updateProduct.CreatedAt = time.Now()
 
-	productID, err := svc.repo.UpdateProduct(ctx, updateProduct)
+	productID, err := svc.repo.Update(ctx, updateProduct)
 	if err != nil {
 		return nil, err
 	}
 
-	product, err := svc.repo.FindProductByID(ctx, productID)
+	product, err := svc.repo.FindByID(ctx, productID)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, valu
 }
 
 func (svc ProductsService) DeleteProduct(ctx context.Context, id uuid.UUID) error {
-	err := svc.repo.DeleteProduct(ctx, id)
+	err := svc.repo.Delete(ctx, id)
 	if err != nil {
 		return err
 	}

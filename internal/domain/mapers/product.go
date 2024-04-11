@@ -27,7 +27,7 @@ func FromProductsToDTO(products []models.Product) []*model.Product {
 	return productsDTO
 }
 
-func FromReqToProduct(req model.ProductReq) models.Product {
+func FromReqToProduct(req model.Product) models.Product {
 	return models.Product{
 		Title:       req.Title,
 		ImageURL:    req.ImageURL,

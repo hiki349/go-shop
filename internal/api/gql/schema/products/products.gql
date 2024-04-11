@@ -15,6 +15,6 @@ input ProductInput {
 	price: Float!
 }
 
-type ProductNotFound  implements ProblemInterface{
+type ProductNotFound implements ProblemInterface{
 	message: String!
 }

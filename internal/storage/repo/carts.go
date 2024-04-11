@@ -15,16 +15,16 @@ type CartsRepo struct {
 }
 
 type ICartsRepo interface {
-	FindCarts(ctx context.Context) ([]models.Cart, error)
-	FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, error)
-	CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error)
+	FindAll(ctx context.Context) ([]models.Cart, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*models.Cart, error)
+	Create(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error)
 }
 
 func NewCartsRepo(db *db.Postgres) *CartsRepo {
 	return &CartsRepo{db}
 }
 
-func (r CartsRepo) FindCarts(ctx context.Context) ([]models.Cart, error) {
+func (r CartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -42,7 +42,7 @@ func (r CartsRepo) FindCarts(ctx context.Context) ([]models.Cart, error) {
 	return products, nil
 }
 
-func (r CartsRepo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
+func (r CartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (r CartsRepo) FindCartByID(ctx context.Context, id uuid.UUID) (*models.Cart
 	return &product, nil
 }
 
-func (r *CartsRepo) CreateCart(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
+func (r *CartsRepo) Create(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

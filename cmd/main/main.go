@@ -19,12 +19,14 @@ func main() {
 	defer postgres.Close(context.Background())
 	if err != nil {
 		clog.Error("%w", err)
+		return
 	}
 
 	mongo, err := db.NewMongo(context.Background(), config.ConnStrMongo)
 	defer mongo.Disconnect(context.Background())
 	if err != nil {
 		clog.Error("%w", err)
+		return
 	}
 
 	productsRepo := repo.NewProductsRepo(postgres)
@@ -37,5 +39,5 @@ func main() {
 	authService := services.NewAuthService(usersRepo, config.JwtSecret)
 
 	go rest.MustStartRestServer(authService, config.RestPort, clog)
-	gql.MustStartGqlServer(productsService, cartsService, usersService, config.GqlPort)
+	gql.MustStartGqlServer(productsService, cartsService, usersService, clog, config.GqlPort)
 }

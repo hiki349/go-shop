@@ -17,7 +17,7 @@ func NewCartsService(repo repo.ICartsRepo) *CartsService {
 }
 
 func (svc CartsService) GetCarts(ctx context.Context) ([]models.Cart, error) {
-	carts, err := svc.repo.FindCarts(ctx)
+	carts, err := svc.repo.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (svc CartsService) GetCarts(ctx context.Context) ([]models.Cart, error) {
 }
 
 func (svc CartsService) GetCart(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
-	cart, err := svc.repo.FindCartByID(ctx, id)
+	cart, err := svc.repo.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -36,12 +36,12 @@ func (svc CartsService) GetCart(ctx context.Context, id uuid.UUID) (*models.Cart
 
 func (svc CartsService) CreateCart(ctx context.Context, userID uuid.UUID) (*models.Cart, error) {
 	cartID := uuid.New()
-	cartIDFromDB, err := svc.repo.CreateCart(ctx, cartID, userID)
+	cartIDFromDB, err := svc.repo.Create(ctx, cartID, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	cart, err := svc.repo.FindCartByID(ctx, cartIDFromDB)
+	cart, err := svc.repo.FindByID(ctx, cartIDFromDB)
 	if err != nil {
 		return nil, err
 	}

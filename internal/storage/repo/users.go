@@ -16,19 +16,19 @@ type UsersRepo struct {
 }
 
 type IUsersRepo interface {
-	FindUsers(ctx context.Context) ([]models.User, error)
-	FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, error)
-	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
-	CreateUser(ctx context.Context, data models.User) (uuid.UUID, error)
-	UpdateUser(ctx context.Context, data models.User) (uuid.UUID, error)
-	DeleteUser(ctx context.Context, id uuid.UUID) error
+	FindAll(ctx context.Context) ([]models.User, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*models.User, error)
+	FindByEmail(ctx context.Context, email string) (*models.User, error)
+	Create(ctx context.Context, data models.User) (uuid.UUID, error)
+	Update(ctx context.Context, data models.User) (uuid.UUID, error)
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 func NewUsersRepo(db *db.Postgres) *UsersRepo {
 	return &UsersRepo{db}
 }
 
-func (r UsersRepo) FindUsers(ctx context.Context) ([]models.User, error) {
+func (r UsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -42,7 +42,7 @@ func (r UsersRepo) FindUsers(ctx context.Context) ([]models.User, error) {
 	return users, nil
 }
 
-func (r UsersRepo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+func (r UsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -59,7 +59,7 @@ func (r UsersRepo) FindUserByID(ctx context.Context, id uuid.UUID) (*models.User
 	return &user, nil
 }
 
-func (r UsersRepo) FindUserByEmail(ctx context.Context, email string) (*models.User, error) {
+func (r UsersRepo) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -73,7 +73,7 @@ func (r UsersRepo) FindUserByEmail(ctx context.Context, email string) (*models.U
 	return &user, err
 }
 
-func (r *UsersRepo) CreateUser(ctx context.Context, values models.User) (uuid.UUID, error) {
+func (r *UsersRepo) Create(ctx context.Context, values models.User) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -98,7 +98,7 @@ func (r *UsersRepo) CreateUser(ctx context.Context, values models.User) (uuid.UU
 	return userID, nil
 }
 
-func (r *UsersRepo) UpdateUser(ctx context.Context, values models.User) (uuid.UUID, error) {
+func (r *UsersRepo) Update(ctx context.Context, values models.User) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -121,7 +121,7 @@ func (r *UsersRepo) UpdateUser(ctx context.Context, values models.User) (uuid.UU
 	return values.ID, nil
 }
 
-func (r *UsersRepo) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (r *UsersRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

@@ -8,7 +8,7 @@ import (
 )
 
 type MinIO struct {
-	client *minio.Client
+	*minio.Client
 }
 
 func NewMinIO(ctx context.Context, ssl bool, url, user, password string) (*MinIO, error) {
@@ -20,5 +20,5 @@ func NewMinIO(ctx context.Context, ssl bool, url, user, password string) (*MinIO
 		return nil, err
 	}
 
-	return &MinIO{client: client}, nil
+	return &MinIO{Client: client}, nil
 }

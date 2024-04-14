@@ -17,18 +17,18 @@ func main() {
 	clog := logger.New(config.Mode)
 
 	postgres, err := db.NewPostgres(context.Background(), config.ConnStrPostgres)
-	defer postgres.Close(context.Background())
 	if err != nil {
 		clog.Error("%w", err)
 		return
 	}
+	defer postgres.Close(context.Background())
 
 	mongo, err := db.NewMongo(context.Background(), config.ConnStrMongo)
-	defer mongo.Disconnect(context.Background())
 	if err != nil {
 		clog.Error("%w", err)
 		return
 	}
+	defer mongo.Disconnect(context.Background())
 
 	productsRepo := repo.NewProductsRepo(postgres)
 	cartsRepo := repo.NewCartsRepo(postgres)

@@ -54,5 +54,9 @@ func (h *Handler) getAccessToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write(jsonBytes)
+	_, err = w.Write(jsonBytes)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }

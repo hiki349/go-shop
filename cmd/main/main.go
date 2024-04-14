@@ -6,6 +6,7 @@ import (
 	"go-shop/internal/api/gql"
 	"go-shop/internal/api/rest"
 	"go-shop/internal/domain/services"
+	"go-shop/internal/metrics"
 	"go-shop/internal/pkg/logger"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
@@ -37,6 +38,8 @@ func main() {
 	cartsService := services.NewCartsService(cartsRepo)
 	usersService := services.NewUsersService(usersRepo)
 	authService := services.NewAuthService(usersRepo, config.JwtSecret)
+
+	go metrics.Listen("127.0.0.1:8082")
 
 	go rest.MustStartRestServer(authService, config.RestPort, clog)
 	gql.MustStartGqlServer(productsService, cartsService, usersService, clog, config.GqlPort)

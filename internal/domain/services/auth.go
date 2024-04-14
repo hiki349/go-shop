@@ -8,11 +8,11 @@ import (
 )
 
 type AuthService struct {
-	repo   repo.IUsersRepo
+	repo   repo.UsersRepo
 	secret string
 }
 
-func NewAuthService(repo repo.IUsersRepo, secret string) *AuthService {
+func NewAuthService(repo repo.UsersRepo, secret string) *AuthService {
 	return &AuthService{
 		repo:   repo,
 		secret: secret,

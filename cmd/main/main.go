@@ -30,8 +30,8 @@ func main() {
 	}
 	defer mongo.Disconnect(context.Background())
 
-	productsRepo := repo.NewProductsRepo(postgres)
-	cartsRepo := repo.NewCartsRepo(postgres)
+	productsRepo := repo.NewPostgresProductsRepo(postgres)
+	cartsRepo := repo.NewPostgresCartsRepo(postgres)
 	usersRepo := repo.NewUsersRepo(postgres)
 
 	productsService := services.NewProductsService(productsRepo)

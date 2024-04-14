@@ -11,11 +11,11 @@ import (
 	"github.com/jackc/pgxutil"
 )
 
-type UsersRepo struct {
+type PostgresUsersRepo struct {
 	db *db.Postgres
 }
 
-type IUsersRepo interface {
+type UsersRepo interface {
 	FindAll(ctx context.Context) ([]models.User, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) (*models.User, error)
@@ -24,11 +24,11 @@ type IUsersRepo interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
-func NewUsersRepo(db *db.Postgres) *UsersRepo {
-	return &UsersRepo{db}
+func NewUsersRepo(db *db.Postgres) *PostgresUsersRepo {
+	return &PostgresUsersRepo{db}
 }
 
-func (r UsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
+func (r PostgresUsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -42,7 +42,7 @@ func (r UsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
 	return users, nil
 }
 
-func (r UsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+func (r PostgresUsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -59,7 +59,7 @@ func (r UsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.User, er
 	return &user, nil
 }
 
-func (r UsersRepo) FindByEmail(ctx context.Context, email string) (*models.User, error) {
+func (r PostgresUsersRepo) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -73,7 +73,7 @@ func (r UsersRepo) FindByEmail(ctx context.Context, email string) (*models.User,
 	return &user, err
 }
 
-func (r *UsersRepo) Create(ctx context.Context, values models.User) (uuid.UUID, error) {
+func (r *PostgresUsersRepo) Create(ctx context.Context, values models.User) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -98,7 +98,7 @@ func (r *UsersRepo) Create(ctx context.Context, values models.User) (uuid.UUID, 
 	return userID, nil
 }
 
-func (r *UsersRepo) Update(ctx context.Context, values models.User) (uuid.UUID, error) {
+func (r *PostgresUsersRepo) Update(ctx context.Context, values models.User) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -121,7 +121,7 @@ func (r *UsersRepo) Update(ctx context.Context, values models.User) (uuid.UUID, 
 	return values.ID, nil
 }
 
-func (r *UsersRepo) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *PostgresUsersRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

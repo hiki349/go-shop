@@ -10,21 +10,21 @@ import (
 	"github.com/jackc/pgxutil"
 )
 
-type CartsRepo struct {
+type PostgresCartsRepo struct {
 	db *db.Postgres
 }
 
-type ICartsRepo interface {
+type CartsRepo interface {
 	FindAll(ctx context.Context) ([]models.Cart, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*models.Cart, error)
 	Create(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error)
 }
 
-func NewCartsRepo(db *db.Postgres) *CartsRepo {
-	return &CartsRepo{db}
+func NewPostgresCartsRepo(db *db.Postgres) *PostgresCartsRepo {
+	return &PostgresCartsRepo{db}
 }
 
-func (r CartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
+func (r PostgresCartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -42,7 +42,7 @@ func (r CartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
 	return products, nil
 }
 
-func (r CartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
+func (r PostgresCartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (r CartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.Cart, er
 	return &product, nil
 }
 
-func (r *CartsRepo) Create(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
+func (r *PostgresCartsRepo) Create(ctx context.Context, cartID, userID uuid.UUID) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

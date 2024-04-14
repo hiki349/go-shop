@@ -2,26 +2,25 @@ package repo
 
 import (
 	"context"
-
-	"go.mongodb.org/mongo-driver/mongo"
+	"go-shop/internal/storage/db"
 )
 
-type TokensRepo struct {
-	client *mongo.Client
+type MongoTokensRepo struct {
+	client *db.Mongo
 }
 
-type ITokensRepo interface {
+type TokensRepo interface {
 	Exists(token string) error
 	Add(token string) error
 }
 
-func NewTokensRepo(client *mongo.Client) *TokensRepo {
-	return &TokensRepo{
+func NewMongoTokensRepo(client *db.Mongo) *MongoTokensRepo {
+	return &MongoTokensRepo{
 		client: client,
 	}
 }
 
-func (r *TokensRepo) Exists(ctx context.Context, token string) error {
+func (r *MongoTokensRepo) Exists(ctx context.Context, token string) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
@@ -35,7 +34,7 @@ func (r *TokensRepo) Exists(ctx context.Context, token string) error {
 	return nil
 }
 
-func (r *TokensRepo) Add(ctx context.Context, token string) error {
+func (r *MongoTokensRepo) Add(ctx context.Context, token string) error {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 

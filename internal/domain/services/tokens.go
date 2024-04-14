@@ -7,7 +7,7 @@ import (
 )
 
 type TokensService struct {
-	repo   repo.ITokensRepo
+	repo   repo.TokensRepo
 	secret string
 }
 

@@ -2,8 +2,6 @@ package services
 
 import (
 	"context"
-	"go-shop/internal/api/gql/model"
-	"go-shop/internal/domain/mapers"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/repo"
 	"time"
@@ -37,8 +35,8 @@ func (svc UsersService) GetUserByID(ctx context.Context, id uuid.UUID) (*models.
 	return user, nil
 }
 
-func (svc *UsersService) CreateUser(ctx context.Context, value model.UserReq) (*models.User, error) {
-	newUser := mapers.FromReqToUser(value)
+func (svc *UsersService) CreateUser(ctx context.Context, value models.User) (*models.User, error) {
+	newUser := value
 	newUser.ID = uuid.New()
 	newUser.CreatedAt = time.Now()
 
@@ -55,8 +53,8 @@ func (svc *UsersService) CreateUser(ctx context.Context, value model.UserReq) (*
 	return user, nil
 }
 
-func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value model.UserReq) (*models.User, error) {
-	updateUser := mapers.FromReqToUser(value)
+func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value models.User) (*models.User, error) {
+	updateUser := value
 	updateUser.ID = uuid.New()
 	updateUser.UpdatetAt = time.Now()
 

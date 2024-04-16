@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -16,10 +15,10 @@ type Config struct {
 	Mode            string
 }
 
-func MustGetConfig() Config {
+func New() (*Config, error) {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	gqlPort := os.Getenv("GQL_PORT")
@@ -29,12 +28,12 @@ func MustGetConfig() Config {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	mode := os.Getenv("MODE")
 
-	return Config{
+	return &Config{
 		GqlPort:         gqlPort,
 		RestPort:        restPort,
 		ConnStrPostgres: connStrPostgres,
 		ConnStrMongo:    connStrMongo,
 		JwtSecret:       jwtSecret,
 		Mode:            mode,
-	}
+	}, nil
 }

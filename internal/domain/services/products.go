@@ -2,8 +2,7 @@ package services
 
 import (
 	"context"
-	"go-shop/internal/api/gql/model"
-	"go-shop/internal/domain/mapers"
+	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/repo"
 	"time"
 
@@ -18,30 +17,26 @@ func NewProductsService(repo repo.ProductsRepo) *ProductsService {
 	return &ProductsService{repo}
 }
 
-func (svc ProductsService) GetProducts(ctx context.Context) ([]*model.Product, error) {
+func (svc ProductsService) GetProducts(ctx context.Context) ([]models.Product, error) {
 	products, err := svc.repo.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	productsDTO := mapers.FromProductsToDTO(products)
-
-	return productsDTO, nil
+	return products, nil
 }
 
-func (svc ProductsService) GetProduct(ctx context.Context, productID uuid.UUID) (*model.Product, error) {
+func (svc ProductsService) GetProduct(ctx context.Context, productID uuid.UUID) (*models.Product, error) {
 	product, err := svc.repo.FindByID(ctx, productID)
 	if err != nil {
 		return nil, err
 	}
 
-	productDTO := mapers.FromProductToDTO(*product)
-
-	return &productDTO, nil
+	return product, nil
 }
 
-func (svc ProductsService) CreateProduct(ctx context.Context, value model.Product) (*model.Product, error) {
-	newProduct := mapers.FromReqToProduct(value)
+func (svc ProductsService) CreateProduct(ctx context.Context, value models.Product) (*models.Product, error) {
+	newProduct := value
 	newProduct.ID = uuid.New()
 	newProduct.CreatedAt = time.Now()
 
@@ -55,13 +50,11 @@ func (svc ProductsService) CreateProduct(ctx context.Context, value model.Produc
 		return nil, err
 	}
 
-	productDTO := mapers.FromProductToDTO(*product)
-
-	return &productDTO, nil
+	return product, nil
 }
 
-func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value model.Product) (*model.Product, error) {
-	updateProduct := mapers.FromReqToProduct(value)
+func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value models.Product) (*models.Product, error) {
+	updateProduct := value
 	updateProduct.ID = id
 	updateProduct.CreatedAt = time.Now()
 
@@ -75,9 +68,7 @@ func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, valu
 		return nil, err
 	}
 
-	productDTO := mapers.FromProductToDTO(*product)
-
-	return &productDTO, nil
+	return product, nil
 }
 
 func (svc ProductsService) DeleteProduct(ctx context.Context, id uuid.UUID) error {

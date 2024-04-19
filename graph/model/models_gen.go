@@ -2,25 +2,31 @@
 
 package model
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NewProduct struct {
+	Title       string  `json:"title"`
+	ImageURL    string  `json:"image_url"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+}
+
+type Product struct {
+	ID          uuid.UUID  `json:"id"`
+	Title       string     `json:"title"`
+	ImageURL    string     `json:"image_url"`
+	Description string     `json:"description"`
+	Price       float64    `json:"price"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
 
 type Query struct {
-}
-
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
-}
-
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
 }

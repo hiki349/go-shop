@@ -2,27 +2,29 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+input NewProduct {
+    title:         String!
+    image_url:     String!
+    description:   String!
+    price:         Float!
 }
 
-type User {
-  id: ID!
-  name: String!
+type Product {
+    id:            UUID!
+    title:         String!
+    image_url:     String!
+    description:   String!
+    price:         Float!
+    created_at:    Time!
+    updated_at:    Time
 }
 
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
+  get_all: [Product!]!
+  get_by_id(id: UUID!): Product
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  create(input: NewProduct!): Product
+  delete(id: UUID!): Boolean!
 }

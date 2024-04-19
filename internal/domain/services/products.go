@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"go-shop/graph/model"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/repo"
 	"time"
@@ -35,10 +36,15 @@ func (svc ProductsService) GetProduct(ctx context.Context, productID uuid.UUID) 
 	return product, nil
 }
 
-func (svc ProductsService) CreateProduct(ctx context.Context, value models.Product) (*models.Product, error) {
-	newProduct := value
-	newProduct.ID = uuid.New()
-	newProduct.CreatedAt = time.Now()
+func (svc ProductsService) CreateProduct(ctx context.Context, value model.NewProduct) (*models.Product, error) {
+	newProduct := models.Product{
+		ID:          uuid.New(),
+		Title:       value.Title,
+		ImageURL:    value.ImageURL,
+		Description: value.Description,
+		Price:       int64(value.Price * 100),
+		CreatedAt:   time.Now(),
+	}
 
 	productID, err := svc.repo.Create(ctx, newProduct)
 	if err != nil {

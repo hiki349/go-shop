@@ -63,14 +63,15 @@ func (r *PostgresProductsRepo) Create(ctx context.Context, values models.Product
 	defer cancel()
 
 	sql := `INSERT INTO products
-	(id, title, image_url, price, created_at, updated_at)
-	VALUES ($1, $2, $3, $4, $5, $6);`
+	(id, title, image_url, description, price, created_at, updated_at)
+	VALUES ($1, $2, $3, $4, $5, $6, $7);`
 
 	_, err := pgxutil.ExecRow(
 		ctx, r.db, sql,
 		values.ID,
 		values.Title,
 		values.ImageURL,
+		values.Description,
 		values.Price,
 		time.Now(),
 		nil,
@@ -87,7 +88,7 @@ func (r *PostgresProductsRepo) Update(ctx context.Context, values models.Product
 	defer cancel()
 
 	sql := `UPDATE products
-	SET title = $2, image_url = $3, price = $4, updated_at = $5
+	SET title = $2, image_url = $3, description = $4, price = $5, updated_at = $6
 	WHERE id = $1;`
 
 	_, err := pgxutil.ExecRow(
@@ -95,6 +96,7 @@ func (r *PostgresProductsRepo) Update(ctx context.Context, values models.Product
 		values.ID,
 		values.Title,
 		values.ImageURL,
+		values.Description,
 		values.Price,
 		values.UpdatedAt,
 	)

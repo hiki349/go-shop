@@ -34,11 +34,11 @@ func main() {
 	}
 	defer mongo.Disconnect(context.Background())
 
-	// productsRepo := repo.NewPostgresProductsRepo(postgres)
+	productsRepo := repo.NewPostgresProductsRepo(postgres)
 	// cartsRepo := repo.NewPostgresCartsRepo(postgres)
 	usersRepo := repo.NewUsersRepo(postgres)
 
-	// productsService := services.NewProductsService(productsRepo)
+	productsService := services.NewProductsService(productsRepo)
 	// cartsService := services.NewCartsService(cartsRepo)
 	// usersService := services.NewUsersService(usersRepo)
 	authService := services.NewAuthService(usersRepo, config.JwtSecret)
@@ -47,7 +47,7 @@ func main() {
 
 	go rest.MustStartRestServer(authService, config.RestPort, clog)
 	
-	err = gql.New(config.GqlPort).Run()
+	err = gql.New(config.GqlPort, productsService).Run()
 	if err != nil {
 		clog.Error("%w", err)
 		return

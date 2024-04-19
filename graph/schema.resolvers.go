@@ -6,18 +6,86 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"go-shop/graph/model"
+	"log"
+	"log/slog"
+
+	"github.com/google/uuid"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// Create is the resolver for the create field.
+func (r *mutationResolver) Create(ctx context.Context, input model.NewProduct) (*model.Product, error) {
+	newProduct, err := r.ProductsService.CreateProduct(ctx, input)
+	if err != nil {
+		slog.Error("%w", err)
+		return nil, err
+	}
+
+	return &model.Product{
+		ID:          newProduct.ID,
+		Title:       newProduct.Title,
+		ImageURL:    newProduct.ImageURL,
+		Description: newProduct.Description,
+		Price:       float64(newProduct.Price),
+		CreatedAt:   newProduct.CreatedAt,
+		UpdatedAt:   newProduct.UpdatedAt,
+	}, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Delete is the resolver for the delete field.
+func (r *mutationResolver) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
+	err := r.ProductsService.DeleteProduct(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, err
+}
+
+// GetAll is the resolver for the get_all field.
+func (r *queryResolver) GetAll(ctx context.Context) ([]*model.Product, error) {
+	products, err := r.ProductsService.GetProducts(ctx)
+	if err != nil {
+		log.Println("%w", err)
+		return nil, err
+	}
+
+	var res []*model.Product
+
+	for _, v := range products {
+		product := &model.Product{
+			ID:          v.ID,
+			Title:       v.Title,
+			ImageURL:    v.ImageURL,
+			Description: v.Description,
+			Price:       float64(v.Price),
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+
+		res = append(res, product)
+	}
+
+	return res, nil
+}
+
+// GetByID is the resolver for the get_by_id field.
+func (r *queryResolver) GetByID(ctx context.Context, id uuid.UUID) (*model.Product, error) {
+	product, err := r.ProductsService.GetProduct(ctx, id)
+	if err != nil {
+		log.Println("%w", err)
+		return nil, err
+	}
+
+	return &model.Product{
+		ID:          product.ID,
+		Title:       product.Title,
+		ImageURL:    product.ImageURL,
+		Description: product.Description,
+		Price:       float64(product.Price),
+		CreatedAt:   product.CreatedAt,
+		UpdatedAt:   product.UpdatedAt,
+	}, nil
 }
 
 // Mutation returns MutationResolver implementation.

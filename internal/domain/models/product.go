@@ -13,5 +13,5 @@ type Product struct {
 	Description string
 	Price       int64
 	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	UpdatedAt   *time.Time
 }

@@ -6,11 +6,14 @@ package graph
 
 import (
 	"context"
-	"go-shop/graph/model"
 	"log"
 	"log/slog"
+	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/graph/model"
+	"go-shop/internal/metrics"
 )
 
 // Create is the resolver for the create field.
@@ -44,6 +47,11 @@ func (r *mutationResolver) Delete(ctx context.Context, id uuid.UUID) (bool, erro
 
 // GetAll is the resolver for the get_all field.
 func (r *queryResolver) GetAll(ctx context.Context) ([]*model.Product, error) {
+	start := time.Now()
+	defer func() {
+		metrics.ObserveRequest(time.Since(start))
+	}()
+
 	products, err := r.ProductsService.GetProducts(ctx)
 	if err != nil {
 		log.Println("%w", err)
@@ -85,6 +93,24 @@ func (r *queryResolver) GetByID(ctx context.Context, id uuid.UUID) (*model.Produ
 		Price:       float64(product.Price),
 		CreatedAt:   product.CreatedAt,
 		UpdatedAt:   product.UpdatedAt,
+	}, nil
+}
+
+// GetUser is the resolver for the get_user field.
+func (r *queryResolver) GetUser(ctx context.Context, id uuid.UUID) (*model.User, error) {
+	user, err := r.UsersService.GetUserByID(ctx, id)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &model.User{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatetAt: user.UpdatetAt,
 	}, nil
 }
 

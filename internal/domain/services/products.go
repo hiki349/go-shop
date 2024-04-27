@@ -2,12 +2,13 @@ package services
 
 import (
 	"context"
-	"go-shop/graph/model"
-	"go-shop/internal/domain/models"
-	"go-shop/internal/storage/repo"
 	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/graph/model"
+	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/repo"
 )
 
 type ProductsService struct {

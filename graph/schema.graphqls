@@ -3,25 +3,36 @@
 # https://gqlgen.com/getting-started/
 
 input NewProduct {
-    title:         String!
-    image_url:     String!
-    description:   String!
-    price:         Float!
+    title:         String!   
+    image_url:     String!   
+    description:   String!   
+    price:         Float!    
 }
 
 type Product {
-    id:            UUID!
-    title:         String!
-    image_url:     String!
-    description:   String!
-    price:         Float!
-    created_at:    Time!
-    updated_at:    Time
+    id:            UUID!                    
+    title:         String!                  
+    image_url:     String!                  
+    description:   String!                  
+    price:         Float!                   
+    created_at:    Time!                    
+    updated_at:    Time                     
+}
+
+type User {
+    id:            UUID!                    
+    username:      String!                  
+    email:         String!                  
+    password:      String!                  
+    created_at:    Time!                    
+    updatet_at:    Time                     
 }
 
 type Query {
   get_all: [Product!]!
   get_by_id(id: UUID!): Product
+
+  get_user(id: UUID!): User
 }
 
 type Mutation {

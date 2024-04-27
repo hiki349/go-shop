@@ -1,33 +1,36 @@
 package gql
 
 import (
-	"go-shop/graph"
-	"go-shop/internal/domain/services"
 	"log"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+
+	"go-shop/graph"
+	"go-shop/internal/domain/services"
 )
 
 type GqlGenServer struct {
 	port            string
 	ProductsService *services.ProductsService
+	UsersService    *services.UsersService
 }
 
 type GqlServer interface {
 	Run()
 }
 
-func New(port string, productsService *services.ProductsService) *GqlGenServer {
+func New(port string, productsService *services.ProductsService, usersService *services.UsersService) *GqlGenServer {
 	return &GqlGenServer{
 		port:            port,
 		ProductsService: productsService,
+		UsersService:    usersService,
 	}
 }
 
 func (s *GqlGenServer) Run() error {
-	srv := createServer(s.ProductsService)
+	srv := createServer(s.ProductsService, s.UsersService)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
@@ -36,10 +39,13 @@ func (s *GqlGenServer) Run() error {
 	return http.ListenAndServe(":"+s.port, nil)
 }
 
-func createServer(productsService *services.ProductsService) *handler.Server {
+func createServer(productsService *services.ProductsService, usersService *services.UsersService) *handler.Server {
 	return handler.NewDefaultServer(
 		graph.NewExecutableSchema(
-			graph.Config{Resolvers: &graph.Resolver{ProductsService: productsService}},
+			graph.Config{Resolvers: &graph.Resolver{
+				ProductsService: productsService,
+				UsersService:    usersService,
+			}},
 		),
 	)
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"go-shop/configuration"
 	"go-shop/internal/api/gql"
 	"go-shop/internal/api/rest"
@@ -10,7 +12,6 @@ import (
 	"go-shop/internal/pkg/logger"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
-	"log"
 )
 
 func main() {
@@ -40,14 +41,14 @@ func main() {
 
 	productsService := services.NewProductsService(productsRepo)
 	// cartsService := services.NewCartsService(cartsRepo)
-	// usersService := services.NewUsersService(usersRepo)
+	usersService := services.NewUsersService(usersRepo)
 	authService := services.NewAuthService(usersRepo, config.JwtSecret)
 
 	go metrics.Listen("127.0.0.1:8082")
 
 	go rest.MustStartRestServer(authService, config.RestPort, clog)
-	
-	err = gql.New(config.GqlPort, productsService).Run()
+
+	err = gql.New(config.GqlPort, productsService, usersService).Run()
 	if err != nil {
 		clog.Error("%w", err)
 		return

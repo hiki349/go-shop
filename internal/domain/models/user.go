@@ -12,5 +12,5 @@ type User struct {
 	Email     string
 	Password  string
 	CreatedAt time.Time
-	UpdatetAt time.Time
+	UpdatetAt *time.Time
 }

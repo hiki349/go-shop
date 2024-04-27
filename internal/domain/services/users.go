@@ -2,11 +2,12 @@ package services
 
 import (
 	"context"
-	"go-shop/internal/domain/models"
-	"go-shop/internal/storage/repo"
 	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/repo"
 )
 
 type UsersService struct {
@@ -56,7 +57,7 @@ func (svc *UsersService) CreateUser(ctx context.Context, value models.User) (*mo
 func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value models.User) (*models.User, error) {
 	updateUser := value
 	updateUser.ID = uuid.New()
-	updateUser.UpdatetAt = time.Now()
+	updateUser.CreatedAt = time.Now()
 
 	userID, err := svc.repo.Update(ctx, updateUser)
 	if err != nil {

@@ -114,6 +114,30 @@ func (r *queryResolver) GetUser(ctx context.Context, id uuid.UUID) (*model.User,
 	}, nil
 }
 
+// GetUsers is the resolver for the get_users field.
+func (r *queryResolver) GetUsers(ctx context.Context) ([]*model.User, error) {
+	users, err := r.UsersService.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []*model.User
+	for _, v := range users {
+		user := &model.User{
+			ID:        v.ID,
+			Username:  v.Username,
+			Email:     v.Email,
+			Password:  v.Password,
+			CreatedAt: v.CreatedAt,
+			UpdatetAt: v.UpdatetAt,
+		}
+
+		res = append(res, user)
+	}
+
+	return res, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

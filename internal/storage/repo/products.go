@@ -2,13 +2,14 @@ package repo
 
 import (
 	"context"
-	"go-shop/internal/domain/models"
-	"go-shop/internal/storage/db"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
+
+	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/db"
 )
 
 type PostgresProductsRepo struct {

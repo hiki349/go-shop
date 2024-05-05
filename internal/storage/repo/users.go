@@ -2,13 +2,14 @@ package repo
 
 import (
 	"context"
-	"go-shop/internal/domain/models"
-	"go-shop/internal/storage/db"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
+
+	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/db"
 )
 
 type PostgresUsersRepo struct {
@@ -31,8 +32,8 @@ func NewUsersRepo(db *db.Postgres) *PostgresUsersRepo {
 func (r PostgresUsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
-
-	query := "Select id, username, email, password, created_at, updated_at FROM users;"
+	
+	query := "SELECT id, username, email, password, created_at, updated_at FROM users;"
 
 	users, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.User])
 	if err != nil {
@@ -63,7 +64,7 @@ func (r PostgresUsersRepo) FindByEmail(ctx context.Context, email string) (*mode
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
-	query := `Select
+	query := `SELECT
 	id, username, email, password, created_at, updated_at
 	FROM users
 	WHERE email = $1;`

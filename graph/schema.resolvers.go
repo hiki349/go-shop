@@ -45,6 +45,33 @@ func (r *mutationResolver) Delete(ctx context.Context, id uuid.UUID) (bool, erro
 	return true, err
 }
 
+// CreateUser is the resolver for the create_user field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	user, err := r.UsersService.CreateUser(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.User{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatetAt: user.UpdatetAt,
+	}, nil
+}
+
+// DeleteUser is the resolver for the delete_user field.
+func (r *mutationResolver) DeleteUser(ctx context.Context, id uuid.UUID) (bool, error) {
+	err := r.UsersService.DeleteUser(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 // GetAll is the resolver for the get_all field.
 func (r *queryResolver) GetAll(ctx context.Context) ([]*model.Product, error) {
 	start := time.Now()

@@ -2,12 +2,13 @@ package repo
 
 import (
 	"context"
-	"go-shop/internal/domain/models"
-	"go-shop/internal/storage/db"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
+
+	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/db"
 )
 
 type PostgresCartsRepo struct {
@@ -28,7 +29,7 @@ func (r PostgresCartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
-	query := `Select carts.id, carts.price, carts.user_id,
+	query := `SELECT carts.id, carts.price, carts.user_id,
 	cart_items.id, cart_items.image_url, cart_items.title, cart_items.price, cart_items.count
 	FROM carts
 	INNER JOIN cart_items
@@ -46,7 +47,7 @@ func (r PostgresCartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
-	query := `Select carts.id, carts.price, carts.user_id,
+	query := `SELECT carts.id, carts.price, carts.user_id,
 	cart_items.id, cart_items.image_url, cart_items.title, cart_items.price, cart_items.count
 	FROM carts
 	WHERE id = $1

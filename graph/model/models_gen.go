@@ -18,6 +18,12 @@ type NewProduct struct {
 	Price       float64 `json:"price"`
 }
 
+type NewUser struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type Product struct {
 	ID          uuid.UUID  `json:"id"`
 	Title       string     `json:"title"`

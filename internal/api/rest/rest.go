@@ -1,13 +1,14 @@
 package rest
 
 import (
-	"go-shop/internal/api/rest/handlers"
-	"go-shop/internal/domain/services"
 	"log"
 	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+
+	"go-shop/internal/api/rest/handlers"
+	"go-shop/internal/domain/services"
 )
 
 type Rest struct {
@@ -31,5 +32,5 @@ func (r *Rest) ServeHTTP() error {
 	router := chi.NewRouter()
 	handlers.Init(r.svc, router).CreateRouter()
 
-	return http.ListenAndServe(r.port, router)
+	return http.ListenAndServe(":"+r.port, router)
 }

@@ -26,7 +26,7 @@ func main() {
 		clog.Error("%w", err)
 		return
 	}
-	defer postgres.Close(context.Background())
+	defer postgres.Close()
 
 	mongo, err := db.NewMongo(context.Background(), config.ConnStrMongo)
 	if err != nil {
@@ -45,7 +45,6 @@ func main() {
 	authService := services.NewAuthService(usersRepo, config.JwtSecret)
 
 	go metrics.Listen("127.0.0.1:8082")
-
 	go rest.MustStartRestServer(authService, config.RestPort, clog)
 
 	err = gql.New(config.GqlPort, productsService, usersService).Run()

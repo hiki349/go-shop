@@ -4,4 +4,4 @@ import (
 	"time"
 )
 
-const maxTimeToDoDbOperation = time.Millisecond * 200
+const maxTimeToDoDbOperation = time.Millisecond * 500

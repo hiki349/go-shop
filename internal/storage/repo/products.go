@@ -32,7 +32,7 @@ func (r PostgresProductsRepo) FindAll(ctx context.Context) ([]models.Product, er
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
-	query := "Select id, title, image_url, description, price, created_at, updated_at FROM products;"
+	query := "SELECT id, title, image_url, description, price, created_at, updated_at FROM products;"
 
 	products, err := pgxutil.Select[models.Product](ctx, r.db, query, nil, pgx.RowToStructByPos)
 	if err != nil {
@@ -46,7 +46,7 @@ func (r PostgresProductsRepo) FindByID(ctx context.Context, id uuid.UUID) (*mode
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
 
-	query := `Select
+	query := `SELECT
 	id, title, image_url, description, price, created_at, updated_at
 	FROM products
 	WHERE id = $1;`

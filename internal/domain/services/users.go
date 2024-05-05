@@ -6,12 +6,21 @@ import (
 
 	"github.com/google/uuid"
 
+	"go-shop/graph/model"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/repo"
 )
 
 type UsersService struct {
 	repo repo.UsersRepo
+}
+
+type IUsersService interface {
+	GetUsers(ctx context.Context) ([]models.User, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error)
+	CreateUser(ctx context.Context, value model.NewUser) (*models.User, error)
+	UpdateUser(ctx context.Context, id uuid.UUID, value models.User) (*models.User, error)
+	DeleteUser(ctx context.Context, id uuid.UUID) error
 }
 
 func NewUsersService(repo repo.UsersRepo) *UsersService {
@@ -36,10 +45,15 @@ func (svc UsersService) GetUserByID(ctx context.Context, id uuid.UUID) (*models.
 	return user, nil
 }
 
-func (svc *UsersService) CreateUser(ctx context.Context, value models.User) (*models.User, error) {
-	newUser := value
-	newUser.ID = uuid.New()
-	newUser.CreatedAt = time.Now()
+func (svc *UsersService) CreateUser(ctx context.Context, value model.NewUser) (*models.User, error) {
+	newUser := models.User{
+		ID:        uuid.New(),
+		Username:  value.Username,
+		Email:     value.Email,
+		Password:  value.Password,
+		CreatedAt: time.Now(),
+		UpdatetAt: nil,
+	}
 
 	userID, err := svc.repo.Create(ctx, newUser)
 	if err != nil {

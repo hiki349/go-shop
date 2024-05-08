@@ -13,12 +13,15 @@ type Postgres struct {
 
 var maxAttempts = 3
 
-func NewPostgres(ctx context.Context, connStr string) (pg *Postgres, err error) {
+func NewPostgres(ctx context.Context, connStr string) (*Postgres, error) {
+	var pool *pgxpool.Pool
+	var err error
+
 	for maxAttempts > 0 {
 		ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 		defer cancel()
 
-		pg.Pool, err = pgxpool.New(ctx, connStr)
+		pool, err = pgxpool.New(ctx, connStr)
 		if err != nil {
 			maxAttempts--
 			continue
@@ -27,5 +30,5 @@ func NewPostgres(ctx context.Context, connStr string) (pg *Postgres, err error) 
 		break
 	}
 
-	return pg, err
+	return &Postgres{Pool: pool}, err
 }

@@ -2,6 +2,17 @@ version: "3.9"
 
 services:
 
+  app:
+    image: go-shop:local
+    container_name: go-shop-app
+    depends_on:
+      - db
+      - tokens-db
+      - images-db
+      - grafana
+      - prometheus
+    
+
   db:
     image: postgres:16.2
     restart: always

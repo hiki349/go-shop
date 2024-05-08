@@ -4,10 +4,10 @@ dev:
 run: build
 	@./bin/go-shop
 
-db-up:
+app-up:
 	@docker-compose up -d 
 
-db-down:
+app-down:
 	@docker-compose down
 
 mgr-up:

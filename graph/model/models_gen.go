@@ -34,6 +34,16 @@ type Product struct {
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
 
+type ProductMutation struct {
+	Create *Product `json:"create,omitempty"`
+	Delete bool     `json:"delete"`
+}
+
+type ProductsQuery struct {
+	GetAll  []*Product `json:"get_all"`
+	GetByID *Product   `json:"get_by_id,omitempty"`
+}
+
 type Query struct {
 }
 

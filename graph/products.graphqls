@@ -1,0 +1,37 @@
+input NewProduct {
+  title:         String!  
+  image_url:     String!
+  description:   String!
+  price:         Float!
+}
+
+type Product {
+  id:            UUID!
+  title:         String!
+  image_url:     String!
+  description:   String!
+  price:         Float!
+  created_at:    Time!
+  updated_at:    Time
+}
+
+type ProductsQuery
+type ProductMutation
+
+extend type Query {
+  products: ProductsQuery!
+}
+
+extend type Mutation {
+  product: ProductMutation!
+}
+
+extend type ProductsQuery {
+  get_all: [Product!]! @goField(forceResolver: true)
+  get_by_id(id: UUID!): Product @goField(forceResolver: true)
+}
+
+extend type ProductMutation {
+  create(input: NewProduct!): Product @goField(forceResolver: true)
+  delete(id: UUID!): Boolean! @goField(forceResolver: true)
+}

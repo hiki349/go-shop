@@ -6,44 +6,11 @@ package graph
 
 import (
 	"context"
+	"go-shop/graph/model"
 	"log"
-	"log/slog"
-	"time"
 
 	"github.com/google/uuid"
-
-	"go-shop/graph/model"
-	"go-shop/internal/metrics"
 )
-
-// Create is the resolver for the create field.
-func (r *mutationResolver) Create(ctx context.Context, input model.NewProduct) (*model.Product, error) {
-	newProduct, err := r.ProductsService.CreateProduct(ctx, input)
-	if err != nil {
-		slog.Error("%w", err)
-		return nil, err
-	}
-
-	return &model.Product{
-		ID:          newProduct.ID,
-		Title:       newProduct.Title,
-		ImageURL:    newProduct.ImageURL,
-		Description: newProduct.Description,
-		Price:       float64(newProduct.Price),
-		CreatedAt:   newProduct.CreatedAt,
-		UpdatedAt:   newProduct.UpdatedAt,
-	}, nil
-}
-
-// Delete is the resolver for the delete field.
-func (r *mutationResolver) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
-	err := r.ProductsService.DeleteProduct(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	return true, err
-}
 
 // CreateUser is the resolver for the create_user field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
@@ -70,57 +37,6 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id uuid.UUID) (bool, 
 	}
 
 	return true, nil
-}
-
-// GetAll is the resolver for the get_all field.
-func (r *queryResolver) GetAll(ctx context.Context) ([]*model.Product, error) {
-	start := time.Now()
-	defer func() {
-		metrics.ObserveRequest(time.Since(start))
-	}()
-
-	products, err := r.ProductsService.GetProducts(ctx)
-	if err != nil {
-		log.Println("%w", err)
-		return nil, err
-	}
-
-	var res []*model.Product
-
-	for _, v := range products {
-		product := &model.Product{
-			ID:          v.ID,
-			Title:       v.Title,
-			ImageURL:    v.ImageURL,
-			Description: v.Description,
-			Price:       float64(v.Price),
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
-		}
-
-		res = append(res, product)
-	}
-
-	return res, nil
-}
-
-// GetByID is the resolver for the get_by_id field.
-func (r *queryResolver) GetByID(ctx context.Context, id uuid.UUID) (*model.Product, error) {
-	product, err := r.ProductsService.GetProduct(ctx, id)
-	if err != nil {
-		log.Println("%w", err)
-		return nil, err
-	}
-
-	return &model.Product{
-		ID:          product.ID,
-		Title:       product.Title,
-		ImageURL:    product.ImageURL,
-		Description: product.Description,
-		Price:       float64(product.Price),
-		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   product.UpdatedAt,
-	}, nil
 }
 
 // GetUser is the resolver for the get_user field.

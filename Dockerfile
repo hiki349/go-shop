@@ -14,6 +14,7 @@ COPY configuration ./configuration
 COPY graph ./graph
 COPY internal ./internal
 COPY migrations ./migrations
+COPY pkg ./pkg
 
 # build
 RUN go build -o bin/go-shop -ldflags "-s -w" -a cmd/main/main.go

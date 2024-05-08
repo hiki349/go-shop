@@ -1,24 +1,2 @@
-input NewUser {
-  username:      String!
-  email:         String!
-  password:      String!
-}
-
-type User {
-  id:            UUID!
-  username:      String!
-  email:         String!
-  password:      String!
-  created_at:    Time!
-  updatet_at:    Time
-}
-
-type Query {
-  get_user(id: UUID!): User
-  get_users: [User]!
-}
-
-type Mutation {
-  create_user(input: NewUser!): User
-  delete_user(id: UUID!): Boolean!
-}
+type Query
+type Mutation

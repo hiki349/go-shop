@@ -37,6 +37,25 @@ func (r *productMutationResolver) Create(ctx context.Context, obj *model.Product
 	}, nil
 }
 
+// Update is the resolver for the update field.
+func (r *productMutationResolver) Update(ctx context.Context, obj *model.ProductMutation, id uuid.UUID, input model.NewProduct) (*model.Product, error) {
+	product, err := r.ProductsService.UpdateProduct(ctx, id, input)
+	if err != nil {
+		slog.Error("%w", err)
+		return nil, err
+	}
+
+	return &model.Product{
+		ID:          product.ID,
+		Title:       product.Title,
+		ImageURL:    product.ImageURL,
+		Description: product.Description,
+		Price:       float64(product.Price),
+		CreatedAt:   product.CreatedAt,
+		UpdatedAt:   product.UpdatedAt,
+	}, nil
+}
+
 // Delete is the resolver for the delete field.
 func (r *productMutationResolver) Delete(ctx context.Context, obj *model.ProductMutation, id uuid.UUID) (bool, error) {
 	err := r.ProductsService.DeleteProduct(ctx, id)

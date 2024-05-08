@@ -36,6 +36,7 @@ type Product struct {
 
 type ProductMutation struct {
 	Create *Product `json:"create,omitempty"`
+	Update *Product `json:"update,omitempty"`
 	Delete bool     `json:"delete"`
 }
 
@@ -54,4 +55,14 @@ type User struct {
 	Password  string     `json:"password"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatetAt *time.Time `json:"updatet_at,omitempty"`
+}
+
+type UserMutation struct {
+	Create *User `json:"create,omitempty"`
+	Delete bool  `json:"delete"`
+}
+
+type UsersQuery struct {
+	GetByID *User   `json:"get_by_id,omitempty"`
+	GetAll  []*User `json:"get_all"`
 }

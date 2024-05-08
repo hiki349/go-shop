@@ -33,5 +33,6 @@ extend type ProductsQuery {
 
 extend type ProductMutation {
   create(input: NewProduct!): Product @goField(forceResolver: true)
+  update(id: UUID!, input: NewProduct!): Product @goField(forceResolver: true)
   delete(id: UUID!): Boolean! @goField(forceResolver: true)
 }

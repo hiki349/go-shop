@@ -60,10 +60,15 @@ func (svc ProductsService) CreateProduct(ctx context.Context, value model.NewPro
 	return product, nil
 }
 
-func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value models.Product) (*models.Product, error) {
-	updateProduct := value
-	updateProduct.ID = id
-	updateProduct.CreatedAt = time.Now()
+func (svc ProductsService) UpdateProduct(ctx context.Context, id uuid.UUID, value model.NewProduct) (*models.Product, error) {
+	updateProduct := models.Product{
+		ID:          id,
+		Title:       value.Title,
+		ImageURL:    value.ImageURL,
+		Description: value.Description,
+		Price:       int64(value.Price * 100),
+		CreatedAt:   time.Now(),
+	}
 
 	productID, err := svc.repo.Update(ctx, updateProduct)
 	if err != nil {

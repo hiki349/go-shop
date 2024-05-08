@@ -2,8 +2,9 @@ package services
 
 import (
 	"context"
-	"go-shop/internal/pkg/token"
+
 	"go-shop/internal/storage/repo"
+	"go-shop/pkg/token"
 )
 
 type TokensService struct {

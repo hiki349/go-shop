@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"go-shop/internal/api/rest/model"
-	"go-shop/internal/pkg/cookie"
 	"net/http"
+
+	"go-shop/internal/api/rest/model"
+	"go-shop/pkg/cookie"
 )
 
 func (h *Handler) login(w http.ResponseWriter, r *http.Request) {

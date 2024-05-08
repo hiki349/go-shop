@@ -9,7 +9,7 @@ import (
 	"go-shop/internal/api/rest"
 	"go-shop/internal/domain/services"
 	"go-shop/internal/metrics"
-	"go-shop/internal/pkg/logger"
+	"go-shop/pkg/logger"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
 )

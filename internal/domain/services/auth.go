@@ -3,8 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
-	"go-shop/internal/pkg/token"
+
 	"go-shop/internal/storage/repo"
+	"go-shop/pkg/token"
 )
 
 type AuthService struct {

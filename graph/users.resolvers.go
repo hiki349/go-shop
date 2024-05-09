@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -25,9 +26,15 @@ func (r *queryResolver) Users(ctx context.Context) (model.UsersQuery, error) {
 
 // Create is the resolver for the create field.
 func (r *userMutationResolver) Create(ctx context.Context, obj *model.UserMutation, input model.NewUser) (*model.User, error) {
+	var updatedAt *time.Time
+
 	user, err := r.UsersService.CreateUser(ctx, input)
 	if err != nil {
 		return nil, err
+	}
+
+	if !user.UpdatedAt.IsZero() {
+		updatedAt = &user.UpdatedAt
 	}
 
 	return &model.User{
@@ -36,25 +43,31 @@ func (r *userMutationResolver) Create(ctx context.Context, obj *model.UserMutati
 		Email:     user.Email,
 		Password:  user.Password,
 		CreatedAt: user.CreatedAt,
-		UpdatetAt: user.UpdatetAt,
+		UpdatetAt: updatedAt,
 	}, nil
 }
 
 // Update is the resolver for the update field.
 func (r *userMutationResolver) Update(ctx context.Context, obj *model.UserMutation, id uuid.UUID, input model.NewUser) (*model.User, error) {
+	var updatedAt *time.Time
+
 	user, err := r.UsersService.UpdateUser(ctx, id, input)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
+	if !user.UpdatedAt.IsZero() {
+		updatedAt = &user.UpdatedAt
+	}
+
 	return &model.User{
 		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
 		CreatedAt: user.CreatedAt,
-		UpdatetAt: user.UpdatetAt,
+		UpdatetAt: updatedAt,
 	}, nil
 }
 
@@ -70,10 +83,16 @@ func (r *userMutationResolver) Delete(ctx context.Context, obj *model.UserMutati
 
 // GetByID is the resolver for the get_by_id field.
 func (r *usersQueryResolver) GetByID(ctx context.Context, obj *model.UsersQuery, id uuid.UUID) (*model.User, error) {
+	var updatedAt *time.Time
+
 	user, err := r.UsersService.GetUserByID(ctx, id)
 	if err != nil {
 		log.Println(err)
 		return nil, err
+	}
+
+	if !user.UpdatedAt.IsZero() {
+		updatedAt = &user.UpdatedAt
 	}
 
 	return &model.User{
@@ -82,7 +101,7 @@ func (r *usersQueryResolver) GetByID(ctx context.Context, obj *model.UsersQuery,
 		Email:     user.Email,
 		Password:  user.Password,
 		CreatedAt: user.CreatedAt,
-		UpdatetAt: user.UpdatetAt,
+		UpdatetAt: updatedAt,
 	}, nil
 }
 
@@ -95,13 +114,19 @@ func (r *usersQueryResolver) GetAll(ctx context.Context, obj *model.UsersQuery) 
 
 	var res []*model.User
 	for _, v := range users {
+		var updatedAt *time.Time
+
+		if !v.UpdatedAt.IsZero() {
+			updatedAt = &v.UpdatedAt
+		}
+
 		user := &model.User{
 			ID:        v.ID,
 			Username:  v.Username,
 			Email:     v.Email,
 			Password:  v.Password,
 			CreatedAt: v.CreatedAt,
-			UpdatetAt: v.UpdatetAt,
+			UpdatetAt: updatedAt,
 		}
 
 		res = append(res, user)

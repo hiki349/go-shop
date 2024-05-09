@@ -6,11 +6,13 @@ package graph
 
 import (
 	"context"
-	"go-shop/graph/model"
 	"log"
 	"log/slog"
+	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/graph/model"
 )
 
 // Product is the resolver for the product field.
@@ -20,10 +22,16 @@ func (r *mutationResolver) Product(ctx context.Context) (model.ProductMutation, 
 
 // Create is the resolver for the create field.
 func (r *productMutationResolver) Create(ctx context.Context, obj *model.ProductMutation, input model.NewProduct) (*model.Product, error) {
+	var updatedAt *time.Time
+
 	newProduct, err := r.ProductsService.CreateProduct(ctx, input)
 	if err != nil {
 		slog.Error("%w", err)
 		return nil, err
+	}
+
+	if !newProduct.CreatedAt.IsZero() {
+		updatedAt = &newProduct.UpdatedAt
 	}
 
 	return &model.Product{
@@ -33,16 +41,22 @@ func (r *productMutationResolver) Create(ctx context.Context, obj *model.Product
 		Description: newProduct.Description,
 		Price:       float64(newProduct.Price),
 		CreatedAt:   newProduct.CreatedAt,
-		UpdatedAt:   newProduct.UpdatedAt,
+		UpdatedAt:   updatedAt,
 	}, nil
 }
 
 // Update is the resolver for the update field.
 func (r *productMutationResolver) Update(ctx context.Context, obj *model.ProductMutation, id uuid.UUID, input model.NewProduct) (*model.Product, error) {
+	var updatedAt *time.Time
+
 	product, err := r.ProductsService.UpdateProduct(ctx, id, input)
 	if err != nil {
 		slog.Error("%w", err)
 		return nil, err
+	}
+
+	if !product.CreatedAt.IsZero() {
+		updatedAt = &product.UpdatedAt
 	}
 
 	return &model.Product{
@@ -52,7 +66,7 @@ func (r *productMutationResolver) Update(ctx context.Context, obj *model.Product
 		Description: product.Description,
 		Price:       float64(product.Price),
 		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   product.UpdatedAt,
+		UpdatedAt:   updatedAt,
 	}, nil
 }
 
@@ -77,6 +91,12 @@ func (r *productsQueryResolver) GetAll(ctx context.Context, obj *model.ProductsQ
 	var res []*model.Product
 
 	for _, v := range products {
+		var updatedAt *time.Time
+
+		if !v.UpdatedAt.IsZero() {
+			updatedAt = &v.UpdatedAt
+		}
+
 		product := &model.Product{
 			ID:          v.ID,
 			Title:       v.Title,
@@ -84,7 +104,7 @@ func (r *productsQueryResolver) GetAll(ctx context.Context, obj *model.ProductsQ
 			Description: v.Description,
 			Price:       float64(v.Price),
 			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
+			UpdatedAt:   updatedAt,
 		}
 
 		res = append(res, product)
@@ -95,10 +115,16 @@ func (r *productsQueryResolver) GetAll(ctx context.Context, obj *model.ProductsQ
 
 // GetByID is the resolver for the get_by_id field.
 func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.ProductsQuery, id uuid.UUID) (*model.Product, error) {
+	var updatedAt *time.Time
+
 	product, err := r.ProductsService.GetProduct(ctx, id)
 	if err != nil {
 		log.Println("%w", err)
 		return nil, err
+	}
+
+	if !product.CreatedAt.IsZero() {
+		updatedAt = &product.UpdatedAt
 	}
 
 	return &model.Product{
@@ -108,7 +134,7 @@ func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.Products
 		Description: product.Description,
 		Price:       float64(product.Price),
 		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   product.UpdatedAt,
+		UpdatedAt:   updatedAt,
 	}, nil
 }
 

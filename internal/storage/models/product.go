@@ -20,6 +20,12 @@ type Product struct {
 }
 
 func (p Product) ToDomain() *domain.Product {
+	var updatedAt time.Time
+
+	if p.UpdatedAt.Valid {
+		updatedAt = p.UpdatedAt.Time
+	}
+
 	return &domain.Product{
 		ID:          p.ID,
 		Title:       p.Title,
@@ -27,6 +33,6 @@ func (p Product) ToDomain() *domain.Product {
 		Description: p.Description,
 		Price:       p.Price,
 		CreatedAt:   p.CreatedAt,
-		UpdatedAt:   &p.CreatedAt,
+		UpdatedAt:   updatedAt,
 	}
 }

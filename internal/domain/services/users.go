@@ -46,7 +46,7 @@ func (svc UsersService) GetUserByID(ctx context.Context, id uuid.UUID) (*models.
 }
 
 func (svc *UsersService) CreateUser(ctx context.Context, value model.NewUser) (*models.User, error) {
-	newUser := models.User{
+	newUser := &models.User{
 		ID:        uuid.New(),
 		Username:  value.Username,
 		Email:     value.Email,
@@ -68,10 +68,14 @@ func (svc *UsersService) CreateUser(ctx context.Context, value model.NewUser) (*
 	return user, nil
 }
 
-func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value models.User) (*models.User, error) {
-	updateUser := value
-	updateUser.ID = uuid.New()
-	updateUser.CreatedAt = time.Now()
+func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value model.NewUser) (*models.User, error) {
+	updateUser := &models.User{
+		ID: id,
+		Username: value.Username,
+		Email: value.Email,
+		Password: value.Password,
+		CreatedAt: time.Now(),
+	}
 
 	userID, err := svc.repo.Update(ctx, updateUser)
 	if err != nil {

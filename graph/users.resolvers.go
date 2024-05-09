@@ -6,10 +6,11 @@ package graph
 
 import (
 	"context"
-	"go-shop/graph/model"
 	"log"
 
 	"github.com/google/uuid"
+
+	"go-shop/graph/model"
 )
 
 // User is the resolver for the user field.
@@ -26,6 +27,24 @@ func (r *queryResolver) Users(ctx context.Context) (model.UsersQuery, error) {
 func (r *userMutationResolver) Create(ctx context.Context, obj *model.UserMutation, input model.NewUser) (*model.User, error) {
 	user, err := r.UsersService.CreateUser(ctx, input)
 	if err != nil {
+		return nil, err
+	}
+
+	return &model.User{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatetAt: user.UpdatetAt,
+	}, nil
+}
+
+// Update is the resolver for the update field.
+func (r *userMutationResolver) Update(ctx context.Context, obj *model.UserMutation, id uuid.UUID, input model.NewUser) (*model.User, error) {
+	user, err := r.UsersService.UpdateUser(ctx, id, input)
+	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

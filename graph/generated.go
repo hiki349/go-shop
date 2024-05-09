@@ -96,6 +96,7 @@ type ComplexityRoot struct {
 	UserMutation struct {
 		Create func(childComplexity int, input model.NewUser) int
 		Delete func(childComplexity int, id uuid.UUID) int
+		Update func(childComplexity int, id uuid.UUID, input model.NewUser) int
 	}
 
 	UsersQuery struct {
@@ -123,6 +124,7 @@ type QueryResolver interface {
 }
 type UserMutationResolver interface {
 	Create(ctx context.Context, obj *model.UserMutation, input model.NewUser) (*model.User, error)
+	Update(ctx context.Context, obj *model.UserMutation, id uuid.UUID, input model.NewUser) (*model.User, error)
 	Delete(ctx context.Context, obj *model.UserMutation, id uuid.UUID) (bool, error)
 }
 type UsersQueryResolver interface {
@@ -346,6 +348,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserMutation.Delete(childComplexity, args["id"].(uuid.UUID)), true
+
+	case "UserMutation.update":
+		if e.complexity.UserMutation.Update == nil {
+			break
+		}
+
+		args, err := ec.field_UserMutation_update_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.UserMutation.Update(childComplexity, args["id"].(uuid.UUID), args["input"].(model.NewUser)), true
 
 	case "UsersQuery.get_all":
 		if e.complexity.UsersQuery.GetAll == nil {
@@ -610,6 +624,30 @@ func (ec *executionContext) field_UserMutation_delete_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_UserMutation_update_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 model.NewUser
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNNewUser2goᚑshopᚋgraphᚋmodelᚐNewUser(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_UsersQuery_get_by_id_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -756,6 +794,8 @@ func (ec *executionContext) fieldContext_Mutation_user(ctx context.Context, fiel
 			switch field.Name {
 			case "create":
 				return ec.fieldContext_UserMutation_create(ctx, field)
+			case "update":
+				return ec.fieldContext_UserMutation_update(ctx, field)
 			case "delete":
 				return ec.fieldContext_UserMutation_delete(ctx, field)
 			}
@@ -1939,6 +1979,72 @@ func (ec *executionContext) fieldContext_UserMutation_create(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_UserMutation_create_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserMutation_update(ctx context.Context, field graphql.CollectedField, obj *model.UserMutation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserMutation_update(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.UserMutation().Update(rctx, obj, fc.Args["id"].(uuid.UUID), fc.Args["input"].(model.NewUser))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgoᚑshopᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserMutation_update(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserMutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updatet_at":
+				return ec.fieldContext_User_updatet_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_UserMutation_update_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4531,6 +4637,39 @@ func (ec *executionContext) _UserMutation(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._UserMutation_create(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "update":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._UserMutation_update(ctx, field, obj)
 				return res
 			}
 

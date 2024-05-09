@@ -31,5 +31,6 @@ extend type UsersQuery {
 
 extend type UserMutation {
   create(input: NewUser!): User @goField(forceResolver: true)
+  update(id: UUID!, input: NewUser!): User @goField(forceResolver: true)
   delete(id: UUID!): Boolean! @goField(forceResolver: true)
 }

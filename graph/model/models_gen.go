@@ -59,6 +59,7 @@ type User struct {
 
 type UserMutation struct {
 	Create *User `json:"create,omitempty"`
+	Update *User `json:"update,omitempty"`
 	Delete bool  `json:"delete"`
 }
 

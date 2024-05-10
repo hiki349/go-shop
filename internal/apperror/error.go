@@ -3,10 +3,10 @@ package apperror
 import "encoding/json"
 
 type AppError struct {
-	Err              error
-	Message          string
-	DeveloperMessage string
-	Code             string
+	Err              error  `json:"-"`
+	Message          string `json:"message"`
+	DeveloperMessage string `json:"-"`
+	Code             string `json:"code"`
 }
 
 func New(err error, message, developerMessage, code string) *AppError {

@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -6,12 +6,12 @@ package graph
 
 import (
 	"context"
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
-
-	"go-shop/graph/model"
 )
 
 // User is the resolver for the user field.
@@ -135,11 +135,11 @@ func (r *usersQueryResolver) GetAll(ctx context.Context, obj *model.UsersQuery) 
 	return res, nil
 }
 
-// UserMutation returns UserMutationResolver implementation.
-func (r *Resolver) UserMutation() UserMutationResolver { return &userMutationResolver{r} }
+// UserMutation returns generated.UserMutationResolver implementation.
+func (r *Resolver) UserMutation() generated.UserMutationResolver { return &userMutationResolver{r} }
 
-// UsersQuery returns UsersQueryResolver implementation.
-func (r *Resolver) UsersQuery() UsersQueryResolver { return &usersQueryResolver{r} }
+// UsersQuery returns generated.UsersQueryResolver implementation.
+func (r *Resolver) UsersQuery() generated.UsersQueryResolver { return &usersQueryResolver{r} }
 
 type userMutationResolver struct{ *Resolver }
 type usersQueryResolver struct{ *Resolver }

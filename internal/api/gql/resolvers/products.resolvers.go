@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -12,7 +12,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"go-shop/graph/model"
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
 )
 
 // Product is the resolver for the product field.
@@ -143,11 +144,13 @@ func (r *queryResolver) Products(ctx context.Context) (model.ProductsQuery, erro
 	return r.Query().Products(ctx)
 }
 
-// ProductMutation returns ProductMutationResolver implementation.
-func (r *Resolver) ProductMutation() ProductMutationResolver { return &productMutationResolver{r} }
+// ProductMutation returns generated.ProductMutationResolver implementation.
+func (r *Resolver) ProductMutation() generated.ProductMutationResolver {
+	return &productMutationResolver{r}
+}
 
-// ProductsQuery returns ProductsQueryResolver implementation.
-func (r *Resolver) ProductsQuery() ProductsQueryResolver { return &productsQueryResolver{r} }
+// ProductsQuery returns generated.ProductsQueryResolver implementation.
+func (r *Resolver) ProductsQuery() generated.ProductsQueryResolver { return &productsQueryResolver{r} }
 
 type productMutationResolver struct{ *Resolver }
 type productsQueryResolver struct{ *Resolver }

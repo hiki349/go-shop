@@ -7,7 +7,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 
-	"go-shop/graph"
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/resolvers"
 	"go-shop/internal/domain/services"
 )
 
@@ -41,8 +42,8 @@ func (s *GqlGenServer) Run() error {
 
 func createServer(productsService *services.ProductsService, usersService *services.UsersService) *handler.Server {
 	return handler.NewDefaultServer(
-		graph.NewExecutableSchema(
-			graph.Config{Resolvers: &graph.Resolver{
+		generated.NewExecutableSchema(
+			generated.Config{Resolvers: &resolvers.Resolver{
 				ProductsService: productsService,
 				UsersService:    usersService,
 			}},

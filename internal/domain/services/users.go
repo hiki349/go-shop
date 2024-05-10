@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"go-shop/graph/model"
+	"go-shop/internal/api/gql/model"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/repo"
 )

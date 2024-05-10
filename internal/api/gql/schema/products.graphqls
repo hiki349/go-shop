@@ -1,5 +1,5 @@
 input NewProduct {
-  title:         String!  
+  title:         String!
   image_url:     String!
   description:   String!
   price:         Float!

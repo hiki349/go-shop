@@ -5,13 +5,14 @@ services:
   app:
     image: go-shop:local
     container_name: go-shop-app
+    restart: always
     depends_on:
       - db
       - tokens-db
       - images-db
+      - redis
       - grafana
       - prometheus
-    
 
   db:
     image: postgres:16.2
@@ -43,6 +44,14 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+
+  redis:
+    image: redis
+    container_name: go-shop-redis
+    restart: always
+    ports:
+      - "6371:6379"
+      - "16371:16379"
 
   grafana:
     image: grafana/grafana:latest

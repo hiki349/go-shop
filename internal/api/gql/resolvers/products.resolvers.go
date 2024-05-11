@@ -18,7 +18,7 @@ import (
 
 // Product is the resolver for the product field.
 func (r *mutationResolver) Product(ctx context.Context) (model.ProductMutation, error) {
-	return r.Mutation().Product(ctx)
+	return model.ProductMutation{}, nil
 }
 
 // Create is the resolver for the create field.
@@ -120,7 +120,7 @@ func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.Products
 
 	product, err := r.ProductsService.GetProduct(ctx, id)
 	if err != nil {
-		log.Println("%w", err)
+		log.Println("resolver: %w", err)
 
 		return model.InternalError{Message: "internal error"}, nil
 	}
@@ -146,7 +146,7 @@ func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.Products
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context) (model.ProductsQuery, error) {
-	return r.Query().Products(ctx)
+	return model.ProductsQuery{}, nil
 }
 
 // ProductMutation returns generated.ProductMutationResolver implementation.

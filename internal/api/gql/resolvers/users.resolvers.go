@@ -6,22 +6,23 @@ package resolvers
 
 import (
 	"context"
-	"go-shop/internal/api/gql/generated"
-	"go-shop/internal/api/gql/model"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
 )
 
 // User is the resolver for the user field.
 func (r *mutationResolver) User(ctx context.Context) (model.UserMutation, error) {
-	return r.Mutation().User(ctx)
+	return model.UserMutation{}, nil
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) (model.UsersQuery, error) {
-	return r.Query().Users(ctx)
+	return model.UsersQuery{}, nil
 }
 
 // Create is the resolver for the create field.

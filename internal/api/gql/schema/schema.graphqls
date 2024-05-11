@@ -1,2 +1,14 @@
 type Query
 type Mutation
+
+interface ErrorInterface {
+    message: String!
+}
+
+type NotFound implements ErrorInterface {
+    message: String!
+}
+
+type InternalError implements ErrorInterface {
+    message: String!
+}

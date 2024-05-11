@@ -15,6 +15,15 @@ type Product {
   updated_at:    Time
 }
 
+type ProductFound {
+  product: Product!
+}
+
+union ProductFoundResult =
+  | InternalError
+  | NotFound
+  | ProductFound
+
 type ProductsQuery
 type ProductMutation
 
@@ -28,7 +37,7 @@ extend type Mutation {
 
 extend type ProductsQuery {
   get_all: [Product!]! @goField(forceResolver: true)
-  get_by_id(id: UUID!): Product @goField(forceResolver: true)
+  get_by_id(id: UUID!): ProductFoundResult! @goField(forceResolver: true)
 }
 
 extend type ProductMutation {

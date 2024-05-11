@@ -115,20 +115,21 @@ func (r *productsQueryResolver) GetAll(ctx context.Context, obj *model.ProductsQ
 }
 
 // GetByID is the resolver for the get_by_id field.
-func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.ProductsQuery, id uuid.UUID) (*model.Product, error) {
+func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.ProductsQuery, id uuid.UUID) (model.ProductFoundResult, error) {
 	var updatedAt *time.Time
 
 	product, err := r.ProductsService.GetProduct(ctx, id)
 	if err != nil {
 		log.Println("%w", err)
-		return nil, err
+
+		return model.InternalError{Message: "internal error"}, nil
 	}
 
 	if !product.CreatedAt.IsZero() {
 		updatedAt = &product.UpdatedAt
 	}
 
-	return &model.Product{
+	resProduct := &model.Product{
 		ID:          product.ID,
 		Title:       product.Title,
 		ImageURL:    product.ImageURL,
@@ -136,6 +137,10 @@ func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.Products
 		Price:       float64(product.Price),
 		CreatedAt:   product.CreatedAt,
 		UpdatedAt:   updatedAt,
+	}
+
+	return model.ProductFound{
+		Product: resProduct,
 	}, nil
 }
 

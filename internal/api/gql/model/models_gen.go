@@ -8,6 +8,24 @@ import (
 	"github.com/google/uuid"
 )
 
+type ErrorInterface interface {
+	IsErrorInterface()
+	GetMessage() string
+}
+
+type ProductFoundResult interface {
+	IsProductFoundResult()
+}
+
+type InternalError struct {
+	Message string `json:"message"`
+}
+
+func (InternalError) IsProductFoundResult() {}
+
+func (InternalError) IsErrorInterface()       {}
+func (this InternalError) GetMessage() string { return this.Message }
+
 type Mutation struct {
 }
 
@@ -24,6 +42,15 @@ type NewUser struct {
 	Password string `json:"password"`
 }
 
+type NotFound struct {
+	Message string `json:"message"`
+}
+
+func (NotFound) IsProductFoundResult() {}
+
+func (NotFound) IsErrorInterface()       {}
+func (this NotFound) GetMessage() string { return this.Message }
+
 type Product struct {
 	ID          uuid.UUID  `json:"id"`
 	Title       string     `json:"title"`
@@ -34,6 +61,12 @@ type Product struct {
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
 
+type ProductFound struct {
+	Product *Product `json:"product"`
+}
+
+func (ProductFound) IsProductFoundResult() {}
+
 type ProductMutation struct {
 	Create *Product `json:"create,omitempty"`
 	Update *Product `json:"update,omitempty"`
@@ -41,8 +74,8 @@ type ProductMutation struct {
 }
 
 type ProductsQuery struct {
-	GetAll  []*Product `json:"get_all"`
-	GetByID *Product   `json:"get_by_id,omitempty"`
+	GetAll  []*Product         `json:"get_all"`
+	GetByID ProductFoundResult `json:"get_by_id"`
 }
 
 type Query struct {

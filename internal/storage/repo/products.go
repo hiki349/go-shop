@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,6 +12,10 @@ import (
 	domain "go-shop/internal/domain/models"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/models"
+)
+
+var (
+	ErrNotFound = errors.New("not found")
 )
 
 type PostgresProductsRepo struct {
@@ -61,6 +66,10 @@ func (r PostgresProductsRepo) FindByID(ctx context.Context, id uuid.UUID) (*doma
 
 	product, err := pgxutil.SelectRow[models.Product](ctx, r.db, query, []any{id}, pgx.RowToStructByPos)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+
 		return nil, err
 	}
 
@@ -86,6 +95,10 @@ func (r *PostgresProductsRepo) Create(ctx context.Context, values domain.Product
 		nil,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.UUID{}, ErrNotFound
+		}
+
 		return uuid.UUID{}, err
 	}
 
@@ -110,6 +123,10 @@ func (r *PostgresProductsRepo) Update(ctx context.Context, values domain.Product
 		values.UpdatedAt,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.UUID{}, ErrNotFound
+		}
+
 		return values.ID, err
 	}
 
@@ -124,6 +141,10 @@ func (r *PostgresProductsRepo) Delete(ctx context.Context, id uuid.UUID) error {
 
 	_, err := pgxutil.ExecRow(ctx, r.db, sql, id)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrNotFound
+		}
+
 		return err
 	}
 

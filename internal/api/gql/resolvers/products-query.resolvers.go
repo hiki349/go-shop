@@ -6,12 +6,15 @@ package resolvers
 
 import (
 	"context"
-	"go-shop/internal/api/gql/generated"
-	"go-shop/internal/api/gql/model"
+	"errors"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
+	"go-shop/internal/storage/repo"
 )
 
 // GetAll is the resolver for the get_all field.
@@ -56,6 +59,10 @@ func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.Products
 	product, err := r.ProductsService.GetProduct(ctx, id)
 	if err != nil {
 		log.Println("resolver: %w", err)
+
+		if errors.Is(err, repo.ErrNotFound) {
+			return model.NotFound{Message: "Product not found"}, nil
+		}
 
 		return model.InternalError{Message: "internal error"}, nil
 	}

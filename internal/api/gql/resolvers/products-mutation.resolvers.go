@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 
 	"go-shop/internal/api/gql/generated"
 	"go-shop/internal/api/gql/model"
+	"go-shop/internal/storage/repo"
 )
 
 // Product is the resolver for the product field.
@@ -58,6 +60,10 @@ func (r *productMutationResolver) Update(ctx context.Context, obj *model.Product
 	if err != nil {
 		slog.Error("%w", err)
 
+		if errors.Is(err, repo.ErrNotFound) {
+			return model.NotFound{Message: "Product not found"}, nil
+		}
+
 		return model.InternalError{Message: "internal error"}, nil
 	}
 
@@ -84,6 +90,10 @@ func (r *productMutationResolver) Update(ctx context.Context, obj *model.Product
 func (r *productMutationResolver) Delete(ctx context.Context, obj *model.ProductMutation, id uuid.UUID) (model.ProductDeleteResult, error) {
 	err := r.ProductsService.DeleteProduct(ctx, id)
 	if err != nil {
+		if errors.Is(err, repo.ErrNotFound) {
+			return model.NotFound{Message: "Product not found"}, nil
+		}
+
 		return model.InternalError{Message: "internal error"}, nil
 	}
 

@@ -1,0 +1,37 @@
+type UserCreate {
+  user: User!
+}
+
+type UserUpdate {
+  user: User!
+}
+
+type UserDelete {
+  is_delete: Boolean!
+}
+
+union UserCreateResult =
+  | InternalError
+  | UserCreate
+
+union UserUpdateResult =
+  | InternalError
+  | NotFound
+  | UserUpdate
+
+union UserDeleteResult =
+  | InternalError
+  | NotFound
+  | UserDelete
+
+type UserMutation
+
+extend type Mutation {
+  user: UserMutation!
+}
+
+extend type UserMutation {
+  create(input: NewUser!): UserCreateResult! @goField(forceResolver: true)
+  update(id: UUID!, input: NewUser!): UserUpdateResult! @goField(forceResolver: true)
+  delete(id: UUID!): UserDeleteResult! @goField(forceResolver: true)
+}

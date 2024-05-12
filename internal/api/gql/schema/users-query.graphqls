@@ -1,0 +1,42 @@
+input NewUser {
+  username:      String!
+  email:         String!
+  password:      String!
+}
+
+type User {
+  id:            UUID!
+  username:      String!
+  email:         String!
+  password:      String!
+  created_at:    Time!
+  updatet_at:    Time
+}
+
+type UserFound {
+  user: User!
+}
+
+union UserFoundResult =
+  | InternalError
+  | NotFound
+  | UserFound
+
+type UsersFound {
+  users: [User!]!
+}
+
+union UsersFoundResult =
+  | InternalError
+  | UsersFound
+
+type UsersQuery
+
+extend type Query {
+  users: UsersQuery!
+}
+
+extend type UsersQuery {
+  get_by_id(id: UUID!): UserFoundResult! @goField(forceResolver: true)
+  get_all: UsersFoundResult! @goField(forceResolver: true)
+}

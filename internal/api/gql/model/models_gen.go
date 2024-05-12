@@ -33,6 +33,26 @@ type ProductsFoundResult interface {
 	IsProductsFoundResult()
 }
 
+type UserCreateResult interface {
+	IsUserCreateResult()
+}
+
+type UserDeleteResult interface {
+	IsUserDeleteResult()
+}
+
+type UserFoundResult interface {
+	IsUserFoundResult()
+}
+
+type UserUpdateResult interface {
+	IsUserUpdateResult()
+}
+
+type UsersFoundResult interface {
+	IsUsersFoundResult()
+}
+
 type InternalError struct {
 	Message string `json:"message"`
 }
@@ -49,6 +69,16 @@ func (InternalError) IsProductsFoundResult() {}
 
 func (InternalError) IsErrorInterface()       {}
 func (this InternalError) GetMessage() string { return this.Message }
+
+func (InternalError) IsUserCreateResult() {}
+
+func (InternalError) IsUserUpdateResult() {}
+
+func (InternalError) IsUserDeleteResult() {}
+
+func (InternalError) IsUserFoundResult() {}
+
+func (InternalError) IsUsersFoundResult() {}
 
 type Mutation struct {
 }
@@ -78,6 +108,12 @@ func (NotFound) IsProductFoundResult() {}
 
 func (NotFound) IsErrorInterface()       {}
 func (this NotFound) GetMessage() string { return this.Message }
+
+func (NotFound) IsUserUpdateResult() {}
+
+func (NotFound) IsUserDeleteResult() {}
+
+func (NotFound) IsUserFoundResult() {}
 
 type Product struct {
 	ID          uuid.UUID  `json:"id"`
@@ -142,13 +178,43 @@ type User struct {
 	UpdatetAt *time.Time `json:"updatet_at,omitempty"`
 }
 
-type UserMutation struct {
-	Create *User `json:"create,omitempty"`
-	Update *User `json:"update,omitempty"`
-	Delete bool  `json:"delete"`
+type UserCreate struct {
+	User *User `json:"user"`
 }
 
+func (UserCreate) IsUserCreateResult() {}
+
+type UserDelete struct {
+	IsDelete bool `json:"is_delete"`
+}
+
+func (UserDelete) IsUserDeleteResult() {}
+
+type UserFound struct {
+	User *User `json:"user"`
+}
+
+func (UserFound) IsUserFoundResult() {}
+
+type UserMutation struct {
+	Create UserCreateResult `json:"create"`
+	Update UserUpdateResult `json:"update"`
+	Delete UserDeleteResult `json:"delete"`
+}
+
+type UserUpdate struct {
+	User *User `json:"user"`
+}
+
+func (UserUpdate) IsUserUpdateResult() {}
+
+type UsersFound struct {
+	Users []*User `json:"users"`
+}
+
+func (UsersFound) IsUsersFoundResult() {}
+
 type UsersQuery struct {
-	GetByID *User   `json:"get_by_id,omitempty"`
-	GetAll  []*User `json:"get_all"`
+	GetByID UserFoundResult  `json:"get_by_id"`
+	GetAll  UsersFoundResult `json:"get_all"`
 }

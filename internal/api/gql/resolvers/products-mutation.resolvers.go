@@ -6,12 +6,13 @@ package resolvers
 
 import (
 	"context"
-	"go-shop/internal/api/gql/generated"
-	"go-shop/internal/api/gql/model"
 	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
+
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
 )
 
 // Product is the resolver for the product field.

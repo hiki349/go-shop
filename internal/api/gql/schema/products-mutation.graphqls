@@ -1,3 +1,29 @@
+type ProductCreate {
+  product: Product!
+}
+
+type ProductUpdate {
+  product: Product!
+}
+
+type ProductDelete {
+  is_delete: Boolean!
+}
+
+union ProductCreateResult =
+  | InternalError
+  | ProductCreate
+
+union ProductUpdateResult =
+  | InternalError
+  | NotFound
+  | ProductUpdate
+
+union ProductDeleteResult =
+  | InternalError
+  | NotFound
+  | ProductDelete
+
 type ProductMutation
 
 extend type Mutation {
@@ -5,7 +31,7 @@ extend type Mutation {
 }
 
 extend type ProductMutation {
-  create(input: NewProduct!): Product @goField(forceResolver: true)
-  update(id: UUID!, input: NewProduct!): Product @goField(forceResolver: true)
-  delete(id: UUID!): Boolean! @goField(forceResolver: true)
+  create(input: NewProduct!): ProductCreateResult! @goField(forceResolver: true)
+  update(id: UUID!, input: NewProduct!): ProductUpdateResult! @goField(forceResolver: true)
+  delete(id: UUID!): ProductDeleteResult! @goField(forceResolver: true)
 }

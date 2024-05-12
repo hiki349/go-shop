@@ -13,8 +13,20 @@ type ErrorInterface interface {
 	GetMessage() string
 }
 
+type ProductCreateResult interface {
+	IsProductCreateResult()
+}
+
+type ProductDeleteResult interface {
+	IsProductDeleteResult()
+}
+
 type ProductFoundResult interface {
 	IsProductFoundResult()
+}
+
+type ProductUpdateResult interface {
+	IsProductUpdateResult()
 }
 
 type ProductsFoundResult interface {
@@ -24,6 +36,12 @@ type ProductsFoundResult interface {
 type InternalError struct {
 	Message string `json:"message"`
 }
+
+func (InternalError) IsProductCreateResult() {}
+
+func (InternalError) IsProductUpdateResult() {}
+
+func (InternalError) IsProductDeleteResult() {}
 
 func (InternalError) IsProductFoundResult() {}
 
@@ -52,6 +70,10 @@ type NotFound struct {
 	Message string `json:"message"`
 }
 
+func (NotFound) IsProductUpdateResult() {}
+
+func (NotFound) IsProductDeleteResult() {}
+
 func (NotFound) IsProductFoundResult() {}
 
 func (NotFound) IsErrorInterface()       {}
@@ -67,6 +89,18 @@ type Product struct {
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
 
+type ProductCreate struct {
+	Product *Product `json:"product"`
+}
+
+func (ProductCreate) IsProductCreateResult() {}
+
+type ProductDelete struct {
+	IsDelete bool `json:"is_delete"`
+}
+
+func (ProductDelete) IsProductDeleteResult() {}
+
 type ProductFound struct {
 	Product *Product `json:"product"`
 }
@@ -74,10 +108,16 @@ type ProductFound struct {
 func (ProductFound) IsProductFoundResult() {}
 
 type ProductMutation struct {
-	Create *Product `json:"create,omitempty"`
-	Update *Product `json:"update,omitempty"`
-	Delete bool     `json:"delete"`
+	Create ProductCreateResult `json:"create"`
+	Update ProductUpdateResult `json:"update"`
+	Delete ProductDeleteResult `json:"delete"`
 }
+
+type ProductUpdate struct {
+	Product *Product `json:"product"`
+}
+
+func (ProductUpdate) IsProductUpdateResult() {}
 
 type ProductsFound struct {
 	Products []*Product `json:"products"`

@@ -6,13 +6,12 @@ package resolvers
 
 import (
 	"context"
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
 	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
-
-	"go-shop/internal/api/gql/generated"
-	"go-shop/internal/api/gql/model"
 )
 
 // Product is the resolver for the product field.
@@ -21,20 +20,21 @@ func (r *mutationResolver) Product(ctx context.Context) (model.ProductMutation, 
 }
 
 // Create is the resolver for the create field.
-func (r *productMutationResolver) Create(ctx context.Context, obj *model.ProductMutation, input model.NewProduct) (*model.Product, error) {
+func (r *productMutationResolver) Create(ctx context.Context, obj *model.ProductMutation, input model.NewProduct) (model.ProductCreateResult, error) {
 	var updatedAt *time.Time
 
 	newProduct, err := r.ProductsService.CreateProduct(ctx, input)
 	if err != nil {
 		slog.Error("%w", err)
-		return nil, err
+
+		return model.InternalError{Message: "internal error"}, nil
 	}
 
 	if !newProduct.CreatedAt.IsZero() {
 		updatedAt = &newProduct.UpdatedAt
 	}
 
-	return &model.Product{
+	product := &model.Product{
 		ID:          newProduct.ID,
 		Title:       newProduct.Title,
 		ImageURL:    newProduct.ImageURL,
@@ -42,24 +42,29 @@ func (r *productMutationResolver) Create(ctx context.Context, obj *model.Product
 		Price:       float64(newProduct.Price),
 		CreatedAt:   newProduct.CreatedAt,
 		UpdatedAt:   updatedAt,
+	}
+
+	return model.ProductCreate{
+		Product: product,
 	}, nil
 }
 
 // Update is the resolver for the update field.
-func (r *productMutationResolver) Update(ctx context.Context, obj *model.ProductMutation, id uuid.UUID, input model.NewProduct) (*model.Product, error) {
+func (r *productMutationResolver) Update(ctx context.Context, obj *model.ProductMutation, id uuid.UUID, input model.NewProduct) (model.ProductUpdateResult, error) {
 	var updatedAt *time.Time
 
 	product, err := r.ProductsService.UpdateProduct(ctx, id, input)
 	if err != nil {
 		slog.Error("%w", err)
-		return nil, err
+
+		return model.InternalError{Message: "internal error"}, nil
 	}
 
 	if !product.CreatedAt.IsZero() {
 		updatedAt = &product.UpdatedAt
 	}
 
-	return &model.Product{
+	res := &model.Product{
 		ID:          product.ID,
 		Title:       product.Title,
 		ImageURL:    product.ImageURL,
@@ -67,17 +72,23 @@ func (r *productMutationResolver) Update(ctx context.Context, obj *model.Product
 		Price:       float64(product.Price),
 		CreatedAt:   product.CreatedAt,
 		UpdatedAt:   updatedAt,
+	}
+
+	return model.ProductUpdate{
+		Product: res,
 	}, nil
 }
 
 // Delete is the resolver for the delete field.
-func (r *productMutationResolver) Delete(ctx context.Context, obj *model.ProductMutation, id uuid.UUID) (bool, error) {
+func (r *productMutationResolver) Delete(ctx context.Context, obj *model.ProductMutation, id uuid.UUID) (model.ProductDeleteResult, error) {
 	err := r.ProductsService.DeleteProduct(ctx, id)
 	if err != nil {
-		return false, err
+		return model.InternalError{Message: "internal error"}, nil
 	}
 
-	return true, err
+	return model.ProductDelete{
+		IsDelete: true,
+	}, err
 }
 
 // ProductMutation returns generated.ProductMutationResolver implementation.

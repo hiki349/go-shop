@@ -1,0 +1,11 @@
+type ProductMutation
+
+extend type Mutation {
+  product: ProductMutation!
+}
+
+extend type ProductMutation {
+  create(input: NewProduct!): Product @goField(forceResolver: true)
+  update(id: UUID!, input: NewProduct!): Product @goField(forceResolver: true)
+  delete(id: UUID!): Boolean! @goField(forceResolver: true)
+}

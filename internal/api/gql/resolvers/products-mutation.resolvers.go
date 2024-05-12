@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"context"
-	"log"
 	"log/slog"
 	"time"
 
@@ -81,81 +80,9 @@ func (r *productMutationResolver) Delete(ctx context.Context, obj *model.Product
 	return true, err
 }
 
-// GetAll is the resolver for the get_all field.
-func (r *productsQueryResolver) GetAll(ctx context.Context, obj *model.ProductsQuery) ([]*model.Product, error) {
-	products, err := r.ProductsService.GetProducts(ctx)
-	if err != nil {
-		log.Println("%w", err)
-		return nil, err
-	}
-
-	var res []*model.Product
-
-	for _, v := range products {
-		var updatedAt *time.Time
-
-		if !v.UpdatedAt.IsZero() {
-			updatedAt = &v.UpdatedAt
-		}
-
-		product := &model.Product{
-			ID:          v.ID,
-			Title:       v.Title,
-			ImageURL:    v.ImageURL,
-			Description: v.Description,
-			Price:       float64(v.Price),
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   updatedAt,
-		}
-
-		res = append(res, product)
-	}
-
-	return res, nil
-}
-
-// GetByID is the resolver for the get_by_id field.
-func (r *productsQueryResolver) GetByID(ctx context.Context, obj *model.ProductsQuery, id uuid.UUID) (model.ProductFoundResult, error) {
-	var updatedAt *time.Time
-
-	product, err := r.ProductsService.GetProduct(ctx, id)
-	if err != nil {
-		log.Println("resolver: %w", err)
-
-		return model.InternalError{Message: "internal error"}, nil
-	}
-
-	if !product.CreatedAt.IsZero() {
-		updatedAt = &product.UpdatedAt
-	}
-
-	resProduct := &model.Product{
-		ID:          product.ID,
-		Title:       product.Title,
-		ImageURL:    product.ImageURL,
-		Description: product.Description,
-		Price:       float64(product.Price),
-		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   updatedAt,
-	}
-
-	return model.ProductFound{
-		Product: resProduct,
-	}, nil
-}
-
-// Products is the resolver for the products field.
-func (r *queryResolver) Products(ctx context.Context) (model.ProductsQuery, error) {
-	return model.ProductsQuery{}, nil
-}
-
 // ProductMutation returns generated.ProductMutationResolver implementation.
 func (r *Resolver) ProductMutation() generated.ProductMutationResolver {
 	return &productMutationResolver{r}
 }
 
-// ProductsQuery returns generated.ProductsQueryResolver implementation.
-func (r *Resolver) ProductsQuery() generated.ProductsQueryResolver { return &productsQueryResolver{r} }
-
 type productMutationResolver struct{ *Resolver }
-type productsQueryResolver struct{ *Resolver }

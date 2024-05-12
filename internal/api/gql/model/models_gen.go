@@ -17,11 +17,17 @@ type ProductFoundResult interface {
 	IsProductFoundResult()
 }
 
+type ProductsFoundResult interface {
+	IsProductsFoundResult()
+}
+
 type InternalError struct {
 	Message string `json:"message"`
 }
 
 func (InternalError) IsProductFoundResult() {}
+
+func (InternalError) IsProductsFoundResult() {}
 
 func (InternalError) IsErrorInterface()       {}
 func (this InternalError) GetMessage() string { return this.Message }
@@ -73,9 +79,15 @@ type ProductMutation struct {
 	Delete bool     `json:"delete"`
 }
 
+type ProductsFound struct {
+	Products []*Product `json:"products"`
+}
+
+func (ProductsFound) IsProductsFoundResult() {}
+
 type ProductsQuery struct {
-	GetAll  []*Product         `json:"get_all"`
-	GetByID ProductFoundResult `json:"get_by_id"`
+	GetAll  ProductsFoundResult `json:"get_all"`
+	GetByID ProductFoundResult  `json:"get_by_id"`
 }
 
 type Query struct {

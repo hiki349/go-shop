@@ -19,29 +19,26 @@ type ProductFound {
   product: Product!
 }
 
+type ProductsFound {
+  products: [Product!]!
+}
+
 union ProductFoundResult =
   | InternalError
   | NotFound
   | ProductFound
 
+union ProductsFoundResult =
+  | InternalError
+  | ProductsFound
+
 type ProductsQuery
-type ProductMutation
 
 extend type Query {
   products: ProductsQuery!
 }
 
-extend type Mutation {
-  product: ProductMutation!
-}
-
 extend type ProductsQuery {
-  get_all: [Product!]! @goField(forceResolver: true)
+  get_all: ProductsFoundResult! @goField(forceResolver: true)
   get_by_id(id: UUID!): ProductFoundResult! @goField(forceResolver: true)
-}
-
-extend type ProductMutation {
-  create(input: NewProduct!): Product @goField(forceResolver: true)
-  update(id: UUID!, input: NewProduct!): Product @goField(forceResolver: true)
-  delete(id: UUID!): Boolean! @goField(forceResolver: true)
 }

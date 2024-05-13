@@ -2,7 +2,13 @@ package repo
 
 import (
 	"context"
+
+	"go-shop/internal/apperror"
 	"go-shop/internal/storage/db"
+)
+
+var (
+	ErrTokenNotFound = apperror.New(nil, "Token not found", "Token not found in Tokens repository", "404")
 )
 
 type MongoTokensRepo struct {

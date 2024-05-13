@@ -2,14 +2,20 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
 
+	"go-shop/internal/apperror"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/db"
+)
+
+var (
+	ErrUserNotFound = apperror.New(nil, "User not found", "User not found in Users repository", "404")
 )
 
 type PostgresUsersRepo struct {
@@ -32,7 +38,7 @@ func NewUsersRepo(db *db.Postgres) *PostgresUsersRepo {
 func (r PostgresUsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, maxTimeToDoDbOperation)
 	defer cancel()
-	
+
 	query := "SELECT id, username, email, password, created_at, updated_at FROM users;"
 
 	users, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.User])
@@ -54,6 +60,10 @@ func (r PostgresUsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.
 
 	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{id}, pgx.RowToStructByPos[models.User])
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+
 		return nil, err
 	}
 
@@ -70,6 +80,13 @@ func (r PostgresUsersRepo) FindByEmail(ctx context.Context, email string) (*mode
 	WHERE email = $1;`
 
 	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{email}, pgx.RowToStructByPos[models.User])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+
+		return nil, err
+	}
 
 	return &user, err
 }
@@ -93,6 +110,10 @@ func (r *PostgresUsersRepo) Create(ctx context.Context, values *models.User) (uu
 		nil,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.UUID{}, ErrNotFound
+		}
+
 		return uuid.UUID{}, err
 	}
 
@@ -116,7 +137,11 @@ func (r *PostgresUsersRepo) Update(ctx context.Context, values *models.User) (uu
 		time.Now(),
 	)
 	if err != nil {
-		return values.ID, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.UUID{}, ErrNotFound
+		}
+
+		return uuid.UUID{}, err
 	}
 
 	return values.ID, nil
@@ -130,6 +155,10 @@ func (r *PostgresUsersRepo) Delete(ctx context.Context, id uuid.UUID) error {
 
 	_, err := pgxutil.ExecRow(ctx, r.db, sql, id)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrNotFound
+		}
+
 		return err
 	}
 

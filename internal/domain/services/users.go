@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 
 	"go-shop/internal/api/gql/model"
 	"go-shop/internal/domain/models"
@@ -48,11 +49,16 @@ func (svc UsersService) GetUserByID(ctx context.Context, id uuid.UUID) (*models.
 func (svc *UsersService) CreateUser(ctx context.Context, value model.NewUser) (*models.User, error) {
 	var updatedAt time.Time
 
+	encryptPassword, err := encryptPassword(value.Password)
+	if err != nil {
+		return nil, err
+	}
+
 	newUser := &models.User{
 		ID:        uuid.New(),
 		Username:  value.Username,
 		Email:     value.Email,
-		Password:  value.Password,
+		Password:  encryptPassword,
 		CreatedAt: time.Now(),
 		UpdatedAt: updatedAt,
 	}
@@ -72,10 +78,10 @@ func (svc *UsersService) CreateUser(ctx context.Context, value model.NewUser) (*
 
 func (svc *UsersService) UpdateUser(ctx context.Context, id uuid.UUID, value model.NewUser) (*models.User, error) {
 	updateUser := &models.User{
-		ID: id,
-		Username: value.Username,
-		Email: value.Email,
-		Password: value.Password,
+		ID:        id,
+		Username:  value.Username,
+		Email:     value.Email,
+		Password:  value.Password,
 		UpdatedAt: time.Now(),
 	}
 
@@ -99,4 +105,13 @@ func (svc *UsersService) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func encryptPassword(password string) (string, error) {
+	encryptPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(encryptPassword), nil
 }

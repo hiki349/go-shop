@@ -6,13 +6,12 @@ package resolvers
 
 import (
 	"context"
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
-
-	"go-shop/internal/api/gql/generated"
-	"go-shop/internal/api/gql/model"
 )
 
 // User is the resolver for the user field.

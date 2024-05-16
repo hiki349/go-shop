@@ -8,6 +8,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type CartFoundResult interface {
+	IsCartFoundResult()
+}
+
+type CartsFoundResult interface {
+	IsCartsFoundResult()
+}
+
 type ErrorInterface interface {
 	IsErrorInterface()
 	GetMessage() string
@@ -53,9 +61,35 @@ type UsersFoundResult interface {
 	IsUsersFoundResult()
 }
 
+type Cart struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+type CartFound struct {
+	Cart *Cart `json:"cart"`
+}
+
+func (CartFound) IsCartFoundResult() {}
+
+type CartsFound struct {
+	Carts []*Cart `json:"carts"`
+}
+
+func (CartsFound) IsCartsFoundResult() {}
+
+type CartsQuery struct {
+	GetAll  CartsFoundResult `json:"get_all"`
+	GetByID CartFoundResult  `json:"get_by_id"`
+}
+
 type InternalError struct {
 	Message string `json:"message"`
 }
+
+func (InternalError) IsCartFoundResult() {}
+
+func (InternalError) IsCartsFoundResult() {}
 
 func (InternalError) IsProductCreateResult() {}
 
@@ -99,6 +133,8 @@ type NewUser struct {
 type NotFound struct {
 	Message string `json:"message"`
 }
+
+func (NotFound) IsCartFoundResult() {}
 
 func (NotFound) IsProductUpdateResult() {}
 

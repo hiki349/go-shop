@@ -1,0 +1,32 @@
+type Cart {
+  id: UUID!
+  user_id: UUID!
+}
+
+type CartFound {
+  cart: Cart!
+}
+
+type CartsFound {
+  carts: [Cart!]!
+}
+
+union CartFoundResult =
+  | InternalError
+  | NotFound
+  | CartFound
+
+union CartsFoundResult =
+  | InternalError
+  | CartsFound
+
+type CartsQuery
+
+extend type Query {
+  carts: CartsQuery!
+}
+
+extend type CartsQuery {
+  get_all: CartsFoundResult! @goField(forceResolver: true)
+  get_by_id(id: UUID!): CartFoundResult! @goField(forceResolver: true)
+}

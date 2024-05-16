@@ -7,14 +7,13 @@ package resolvers
 import (
 	"context"
 	"errors"
+	"go-shop/internal/api/gql/generated"
+	"go-shop/internal/api/gql/model"
+	"go-shop/internal/storage/repo"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
-
-	"go-shop/internal/api/gql/generated"
-	"go-shop/internal/api/gql/model"
-	"go-shop/internal/storage/repo"
 )
 
 // GetAll is the resolver for the get_all field.

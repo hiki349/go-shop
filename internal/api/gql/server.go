@@ -16,22 +16,24 @@ type GqlGenServer struct {
 	port            string
 	ProductsService *services.ProductsService
 	UsersService    *services.UsersService
+	CartsService    *services.CartsService
 }
 
 type GqlServer interface {
 	Run()
 }
 
-func New(port string, productsService *services.ProductsService, usersService *services.UsersService) *GqlGenServer {
+func New(port string, productsService *services.ProductsService, usersService *services.UsersService, cartsService *services.CartsService) *GqlGenServer {
 	return &GqlGenServer{
 		port:            port,
 		ProductsService: productsService,
 		UsersService:    usersService,
+		CartsService:    cartsService,
 	}
 }
 
 func (s *GqlGenServer) Run() error {
-	srv := createServer(s.ProductsService, s.UsersService)
+	srv := s.createServer()
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
@@ -40,12 +42,13 @@ func (s *GqlGenServer) Run() error {
 	return http.ListenAndServe(":"+s.port, nil)
 }
 
-func createServer(productsService *services.ProductsService, usersService *services.UsersService) *handler.Server {
+func (s *GqlGenServer) createServer() *handler.Server {
 	return handler.NewDefaultServer(
 		generated.NewExecutableSchema(
 			generated.Config{Resolvers: &resolvers.Resolver{
-				ProductsService: productsService,
-				UsersService:    usersService,
+				ProductsService: s.ProductsService,
+				UsersService:    s.UsersService,
+				CartsService:    s.CartsService,
 			}},
 		),
 	)

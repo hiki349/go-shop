@@ -9,4 +9,5 @@ import "go-shop/internal/domain/services"
 type Resolver struct {
 	ProductsService *services.ProductsService
 	UsersService    *services.UsersService
+	CartsService    *services.CartsService
 }

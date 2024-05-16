@@ -9,9 +9,9 @@ import (
 	"go-shop/internal/api/rest"
 	"go-shop/internal/domain/services"
 	"go-shop/internal/metrics"
-	"go-shop/pkg/logger"
 	"go-shop/internal/storage/db"
 	"go-shop/internal/storage/repo"
+	"go-shop/pkg/logger"
 )
 
 func main() {
@@ -36,18 +36,18 @@ func main() {
 	defer mongo.Disconnect(context.Background())
 
 	productsRepo := repo.NewPostgresProductsRepo(postgres)
-	// cartsRepo := repo.NewPostgresCartsRepo(postgres)
+	cartsRepo := repo.NewPostgresCartsRepo(postgres)
 	usersRepo := repo.NewUsersRepo(postgres)
 
 	productsService := services.NewProductsService(productsRepo)
-	// cartsService := services.NewCartsService(cartsRepo)
+	cartsService := services.NewCartsService(cartsRepo)
 	usersService := services.NewUsersService(usersRepo)
 	authService := services.NewAuthService(usersRepo, config.JwtSecret)
 
 	go metrics.Listen("127.0.0.1:8082")
 	go rest.MustStartRestServer(authService, config.RestPort, clog)
 
-	err = gql.New(config.GqlPort, productsService, usersService).Run()
+	err = gql.New(config.GqlPort, productsService, usersService, cartsService).Run()
 	if err != nil {
 		clog.Error("%w", err)
 		return

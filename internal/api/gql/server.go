@@ -10,6 +10,7 @@ import (
 	"go-shop/internal/api/gql/generated"
 	"go-shop/internal/api/gql/resolvers"
 	"go-shop/internal/domain/services"
+	"go-shop/internal/middleware"
 )
 
 type GqlGenServer struct {
@@ -33,10 +34,11 @@ func New(port string, productsService *services.ProductsService, usersService *s
 }
 
 func (s *GqlGenServer) Run() error {
+	logging := middleware.Logging()
 	srv := s.createServer()
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", logging(srv))
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", s.port)
 
 	return http.ListenAndServe(":"+s.port, nil)

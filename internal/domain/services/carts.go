@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
-	"go-shop/internal/domain/models"
-	"go-shop/internal/storage/repo"
 
 	"github.com/google/uuid"
+
+	"go-shop/internal/domain/models"
+	"go-shop/internal/storage/repo"
 )
 
 type CartsService struct {
@@ -35,13 +36,12 @@ func (svc CartsService) GetCart(ctx context.Context, id uuid.UUID) (*models.Cart
 }
 
 func (svc CartsService) CreateCart(ctx context.Context, userID uuid.UUID) (*models.Cart, error) {
-	cartID := uuid.New()
-	cartIDFromDB, err := svc.repo.Create(ctx, cartID, userID)
+	cartID, err := svc.repo.Create(ctx, uuid.New(), userID)
 	if err != nil {
 		return nil, err
 	}
 
-	cart, err := svc.repo.FindByID(ctx, cartIDFromDB)
+	cart, err := svc.repo.FindByID(ctx, cartID)
 	if err != nil {
 		return nil, err
 	}

@@ -5,10 +5,13 @@ run: build
 	@./bin/go-shop
 
 app-up:
-	@docker-compose up -d 
+	@docker compose up -d
+
+dev-up:
+	@docker compose -f ./docker-compose-dev.yml up -d
 
 app-down:
-	@docker-compose down
+	@docker compose down
 
 mgr-up:
 	@goose -dir migrations postgres "postgresql://postgres:postgres@127.0.0.1:5432/shop-db" up

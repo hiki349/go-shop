@@ -127,7 +127,7 @@ func (r *PostgresProductsRepo) Update(ctx context.Context, values domain.Product
 			return uuid.UUID{}, ErrNotFound
 		}
 
-		return values.ID, err
+		return uuid.UUID{}, err
 	}
 
 	return values.ID, nil

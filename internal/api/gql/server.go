@@ -34,7 +34,7 @@ func New(port string, productsService *services.ProductsService, usersService *s
 }
 
 func (s *GqlGenServer) Run() error {
-	logging := middleware.Logging()
+	logging := middleware.Auth()
 	srv := s.createServer()
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

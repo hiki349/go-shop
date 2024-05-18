@@ -9,13 +9,12 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
 
-	"go-shop/internal/apperror"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/db"
 )
 
 var (
-	ErrUserNotFound = apperror.New(nil, "User not found", "User not found in Users repository", "404")
+	ErrUserNotFound = errors.New("not found user")
 )
 
 type PostgresUsersRepo struct {
@@ -61,7 +60,7 @@ func (r PostgresUsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.
 	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{id}, pgx.RowToStructByPos[models.User])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, ErrUserNotFound
 		}
 
 		return nil, err
@@ -82,7 +81,7 @@ func (r PostgresUsersRepo) FindByEmail(ctx context.Context, email string) (*mode
 	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{email}, pgx.RowToStructByPos[models.User])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, ErrUserNotFound
 		}
 
 		return nil, err
@@ -111,7 +110,7 @@ func (r *PostgresUsersRepo) Create(ctx context.Context, values *models.User) (uu
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return uuid.UUID{}, ErrNotFound
+			return uuid.UUID{}, ErrUserNotFound
 		}
 
 		return uuid.UUID{}, err

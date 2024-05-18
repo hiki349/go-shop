@@ -8,13 +8,12 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgxutil"
 
-	"go-shop/internal/apperror"
 	"go-shop/internal/domain/models"
 	"go-shop/internal/storage/db"
 )
 
 var (
-	ErrCartNotFound = apperror.New(nil, "Cart not found", "Cart not found in Carts repository", "404")
+	ErrCartNotFound = errors.New("not found cart")
 )
 
 type PostgresCartsRepo struct {
@@ -43,9 +42,6 @@ func (r PostgresCartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
 
 	products, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.Cart])
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
-		}
 
 		return nil, err
 	}
@@ -67,7 +63,7 @@ func (r PostgresCartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.
 	product, err := pgxutil.SelectRow[models.Cart](ctx, r.db, query, []any{id}, pgx.RowToStructByPos)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, ErrCartNotFound
 		}
 
 		return nil, err
@@ -89,7 +85,7 @@ func (r *PostgresCartsRepo) Create(ctx context.Context, cartID, userID uuid.UUID
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return uuid.UUID{}, ErrNotFound
+			return uuid.UUID{}, ErrCartNotFound
 		}
 
 		return uuid.UUID{}, err

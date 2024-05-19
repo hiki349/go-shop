@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	"go-shop/internal/storage/db"
 )
@@ -34,6 +35,8 @@ func (r *MongoTokensRepo) Exists(ctx context.Context, token string) error {
 
 	res := collection.FindOne(ctx, token)
 	if err := res.Err(); err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		return err
 	}
 
@@ -48,6 +51,8 @@ func (r *MongoTokensRepo) Add(ctx context.Context, token string) error {
 
 	_, err := collection.InsertOne(ctx, token)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		return err
 	}
 

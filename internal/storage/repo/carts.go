@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -42,6 +43,7 @@ func (r PostgresCartsRepo) FindAll(ctx context.Context) ([]models.Cart, error) {
 
 	products, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.Cart])
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
 
 		return nil, err
 	}
@@ -62,6 +64,8 @@ func (r PostgresCartsRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.
 
 	product, err := pgxutil.SelectRow[models.Cart](ctx, r.db, query, []any{id}, pgx.RowToStructByPos)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrCartNotFound
 		}
@@ -84,6 +88,8 @@ func (r *PostgresCartsRepo) Create(ctx context.Context, cartID, userID uuid.UUID
 		userID,
 	)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return uuid.UUID{}, ErrCartNotFound
 		}

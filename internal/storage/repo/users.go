@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -42,6 +43,8 @@ func (r PostgresUsersRepo) FindAll(ctx context.Context) ([]models.User, error) {
 
 	users, err := pgxutil.Select(ctx, r.db, query, nil, pgx.RowToStructByPos[models.User])
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		return nil, err
 	}
 
@@ -59,6 +62,8 @@ func (r PostgresUsersRepo) FindByID(ctx context.Context, id uuid.UUID) (*models.
 
 	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{id}, pgx.RowToStructByPos[models.User])
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrUserNotFound
 		}
@@ -80,6 +85,8 @@ func (r PostgresUsersRepo) FindByEmail(ctx context.Context, email string) (*mode
 
 	user, err := pgxutil.SelectRow(ctx, r.db, query, []any{email}, pgx.RowToStructByPos[models.User])
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrUserNotFound
 		}
@@ -109,6 +116,8 @@ func (r *PostgresUsersRepo) Create(ctx context.Context, values *models.User) (uu
 		nil,
 	)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return uuid.UUID{}, ErrUserNotFound
 		}
@@ -136,6 +145,8 @@ func (r *PostgresUsersRepo) Update(ctx context.Context, values *models.User) (uu
 		time.Now(),
 	)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return uuid.UUID{}, ErrNotFound
 		}
@@ -154,6 +165,8 @@ func (r *PostgresUsersRepo) Delete(ctx context.Context, id uuid.UUID) error {
 
 	_, err := pgxutil.ExecRow(ctx, r.db, sql, id)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return ErrNotFound
 		}

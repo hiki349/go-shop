@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -44,6 +45,8 @@ func (r PostgresProductsRepo) FindAll(ctx context.Context) ([]domain.Product, er
 
 	products, err := pgxutil.Select[models.Product](ctx, r.db, query, nil, pgx.RowToStructByPos)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		return nil, err
 	}
 
@@ -66,6 +69,8 @@ func (r PostgresProductsRepo) FindByID(ctx context.Context, id uuid.UUID) (*doma
 
 	product, err := pgxutil.SelectRow[models.Product](ctx, r.db, query, []any{id}, pgx.RowToStructByPos)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
 		}
@@ -95,6 +100,8 @@ func (r *PostgresProductsRepo) Create(ctx context.Context, values domain.Product
 		nil,
 	)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return uuid.UUID{}, ErrNotFound
 		}
@@ -123,6 +130,8 @@ func (r *PostgresProductsRepo) Update(ctx context.Context, values domain.Product
 		values.UpdatedAt,
 	)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return uuid.UUID{}, ErrNotFound
 		}
@@ -141,6 +150,8 @@ func (r *PostgresProductsRepo) Delete(ctx context.Context, id uuid.UUID) error {
 
 	_, err := pgxutil.ExecRow(ctx, r.db, sql, id)
 	if err != nil {
+		slog.InfoContext(ctx, "%w", err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return ErrNotFound
 		}
